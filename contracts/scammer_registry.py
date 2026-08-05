@@ -4,6 +4,8 @@ from genlayer import *
 
 from dataclasses import dataclass
 
+import typing
+
 @allow_storage
 @dataclass
 class ProfileStatus:
@@ -12,6 +14,13 @@ class ProfileStatus:
     case_count: u32
     last_updated: bigint
 
+def _to_address(val: typing.Any) -> Address:
+    if isinstance(val, Address):
+        return val
+    if isinstance(val, int):
+        return Address(hex(val))
+    return Address(str(val))
+
 class Contract(gl.Contract):
     statuses: TreeMap[str, ProfileStatus]
     watchers: TreeMap[str, DynArray[Address]]
@@ -19,17 +28,17 @@ class Contract(gl.Contract):
     admin: Address
 
     def __init__(self):
-        self.admin = gl.message.sender_address
+        self.admin = _to_address(gl.message.sender_address)
 
     @gl.public.write
     def set_core(self, core_addr: Address) -> None:
-        if gl.message.sender_address != self.admin:
+        if _to_address(gl.message.sender_address) != self.admin:
             raise gl.vm.UserError("only admin can set core address")
-        self.core = core_addr
+        self.core = _to_address(core_addr)
 
     @gl.public.write
     def upsert_status(self, profile_hash: str, verdict_label: str, confidence: u8) -> None:
-        if gl.message.sender_address != self.core:
+        if _to_address(gl.message.sender_address) != self.core:
             raise gl.vm.UserError("only core contract can update status")
 
         cur = self.statuses.get(profile_hash, None)
@@ -54,11 +63,11 @@ class Contract(gl.Contract):
 
     @gl.public.write
     def subscribe_watcher(self, profile_hash: str, watcher: Address) -> None:
-        if gl.message.sender_address != self.core:
+        if _to_address(gl.message.sender_address) != self.core:
             raise gl.vm.UserError("only core contract can add watcher")
 
         arr = self.watchers.get(profile_hash, DynArray[Address]())
-        arr.append(watcher)
+        arr.append(_to_address(watcher))
         self.watchers[profile_hash] = arr
 
     @gl.public.view

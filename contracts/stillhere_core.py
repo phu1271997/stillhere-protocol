@@ -77,6 +77,13 @@ def _addr_str(addr: Address) -> str:
     except Exception:
         return str(addr)
 
+def _to_address(val: typing.Any) -> Address:
+    if isinstance(val, Address):
+        return val
+    if isinstance(val, int):
+        return Address(hex(val))
+    return Address(str(val))
+
 def _normalize_verdict(raw_label: str, confidence: int, critical_flag_count: int, thr_conf: int, thr_flags: int) -> str:
     if raw_label == VERDICT_LIKELY_SCAM_RING:
         if confidence < thr_conf or critical_flag_count < thr_flags:
@@ -133,13 +140,13 @@ class Contract(gl.Contract):
     scam_critical_flags_required: u8
 
     def __init__(self, registry_addr: Address, base_fee: bigint, dispute_fee: bigint, contributor_share_bps: u16, scam_confidence_threshold: u8, scam_critical_flags_required: u8):
-        self.admin = gl.message.sender_address
-        self.registry = registry_addr
-        self.base_fee = base_fee
-        self.dispute_fee = dispute_fee
-        self.contributor_share_bps = contributor_share_bps
-        self.scam_confidence_threshold = scam_confidence_threshold
-        self.scam_critical_flags_required = scam_critical_flags_required
+        self.admin = _to_address(gl.message.sender_address)
+        self.registry = _to_address(registry_addr)
+        self.base_fee = bigint(int(base_fee))
+        self.dispute_fee = bigint(int(dispute_fee))
+        self.contributor_share_bps = u16(int(contributor_share_bps))
+        self.scam_confidence_threshold = u8(int(scam_confidence_threshold))
+        self.scam_critical_flags_required = u8(int(scam_critical_flags_required))
         self.next_case_id = bigint(0)
         self.treasury = bigint(0)
 
@@ -160,7 +167,7 @@ class Contract(gl.Contract):
         self.treasury = self.treasury + self.base_fee
 
         c = Case(
-            requester=gl.message.sender_address,
+            requester=_to_address(gl.message.sender_address),
             profile_hash=profile_hash,
             chat_sample_hash=chat_sample_hash,
             claimed_identity_hash=claimed_identity_hash,
@@ -196,7 +203,7 @@ class Contract(gl.Contract):
         self.contributions[case_id_str] = arr
 
         user_map = self.contributors.get(case_id_str, TreeMap[str, Address]())
-        user_map[evidence_hash] = gl.message.sender_address
+        user_map[evidence_hash] = _to_address(gl.message.sender_address)
         self.contributors[case_id_str] = user_map
 
     @gl.public.write.payable
@@ -225,8 +232,8 @@ class Contract(gl.Contract):
         user_map = self.contributors.get(case_id_str, TreeMap[str, Address]())
         if evidence_hash not in user_map:
             raise gl.vm.UserError("no contribution registered for this hash")
-        contrib_addr = user_map[evidence_hash]
-        if contrib_addr != gl.message.sender_address:
+        contrib_addr = _to_address(user_map[evidence_hash])
+        if contrib_addr != _to_address(gl.message.sender_address):
             raise gl.vm.UserError("caller is not the registered contributor")
 
         claimed_map = self.contribution_claimed.get(case_id_str, TreeMap[str, bool]())
@@ -252,7 +259,7 @@ class Contract(gl.Contract):
     @gl.public.write
     def subscribe_watcher(self, profile_hash: str) -> None:
         reg = gl.get_contract_at(self.registry).as_interface(IRegistry)
-        reg.subscribe_watcher(profile_hash, gl.message.sender_address)
+        reg.subscribe_watcher(profile_hash, _to_address(gl.message.sender_address))
 
     @gl.public.view
     def get_case(self, case_id_str: str) -> Case:
@@ -275,12 +282,12 @@ class Contract(gl.Contract):
 
     @gl.public.write
     def withdraw_treasury(self, to_addr: Address, amount: bigint) -> None:
-        if gl.message.sender_address != self.admin:
+        if _to_address(gl.message.sender_address) != self.admin:
             raise gl.vm.UserError("only admin can withdraw treasury")
         if amount > self.treasury:
             raise gl.vm.UserError("insufficient treasury balance")
         self.treasury = self.treasury - amount
-        gl.get_contract_at(to_addr).emit_transfer(value=u256(int(amount)))
+        gl.get_contract_at(_to_address(to_addr)).emit_transfer(value=u256(int(amount)))
 
     def _run_ai_jury(self, case_id_str: str, chat_sample: str, is_dispute_round: bool) -> None:
         c = self.cases[case_id_str]
