@@ -70,12 +70,13 @@ export const RequestVerify: React.FC = () => {
 
       const client = makeClient(userAddr as `0x${string}`);
 
-      const topupVal = BigInt(bountyTopup || '0');
+      const topupValNum = Number(bountyTopup || '0');
       const baseFee = BigInt('1000000000000000');
-      const totalVal = baseFee + topupVal;
+      const totalVal = baseFee + BigInt(topupValNum);
 
       const txHash = await client.writeContract({
-        address: CORE_ADDRESS,
+        account: ({ address: userAddr } as any),
+        address: CORE_ADDRESS as any,
         functionName: 'request_verification',
         args: [
           profileHash,
@@ -84,7 +85,7 @@ export const RequestVerify: React.FC = () => {
           identityHash,
           chatSample,
           chatHash,
-          topupVal,
+          topupValNum,
         ],
         value: totalVal,
       });

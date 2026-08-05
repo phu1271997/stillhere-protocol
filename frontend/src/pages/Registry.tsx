@@ -19,7 +19,8 @@ export const Registry: React.FC = () => {
 
       const client = makeClient((userAddr || '0x0000000000000000000000000000000000000000') as `0x${string}`);
       const status = await client.readContract({
-        address: REGISTRY_ADDRESS,
+        account: ({ address: userAddr } as any),
+        address: REGISTRY_ADDRESS as any,
         functionName: 'get_status',
         args: [hashInput.trim()],
       });

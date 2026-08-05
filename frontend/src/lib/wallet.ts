@@ -1,6 +1,6 @@
-import { studionet } from 'genlayer-js/chains';
+import { simulator } from 'genlayer-js/chains';
 
-const CHAIN_ID_HEX = "0x" + studionet.id.toString(16);
+const CHAIN_ID_HEX = "0x" + simulator.id.toString(16);
 
 export async function ensureStudionet() {
   if (typeof window === 'undefined' || !window.ethereum) {

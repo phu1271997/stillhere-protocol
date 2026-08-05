@@ -62,15 +62,14 @@ See [`docs/ETHICS.md`](file:///Users/peter/Downloads/AI/Genlayer/7-StillHere/doc
 
 ---
 
-## 4. Contract Deployment on Studionet
+## 4. Deployed Contracts on GenLayer Studionet
 
-1. Open GenLayer Studio: `https://studio.genlayer.com/run-debug`
-2. Deploy `contracts/scammer_registry.py` first.
-3. Deploy `contracts/stillhere_core.py` passing `registry_addr`, `base_fee`, `dispute_fee`, `contributor_share_bps`, `scam_confidence_threshold`, and `scam_critical_flags_required`.
-4. Call `scammer_registry.set_core(core_address)` to authorize status updates.
-5. Verify transaction `Result: SUCCESS`.
+| Contract | Deployed Address |
+|---|---|
+| **StillHereCore** | [`0x2b96674AD3480e198B5704e6535bcC72Ab535A5e`](https://genlayer-explorer.vercel.app/address/0x2b96674AD3480e198B5704e6535bcC72Ab535A5e) |
+| **ScammerRegistry** | [`0xd4826725f78449CD61D33A43dBb167ABE353Cbdc`](https://genlayer-explorer.vercel.app/address/0xd4826725f78449CD61D33A43dBb167ABE353Cbdc) |
 
-For contract addresses and transaction links, see [`scripts/deploy.md`](file:///Users/peter/Downloads/AI/Genlayer/7-StillHere/scripts/deploy.md).
+For deployment logs and parameters, see [`scripts/deploy.md`](file:///Users/peter/Downloads/AI/Genlayer/7-StillHere/scripts/deploy.md).
 
 ---
 

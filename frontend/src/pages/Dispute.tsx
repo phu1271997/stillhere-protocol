@@ -38,7 +38,8 @@ export const Dispute: React.FC = () => {
       const disputeFee = BigInt('2000000000000000');
 
       const txHash = await client.writeContract({
-        address: CORE_ADDRESS,
+        account: ({ address: userAddr } as any),
+        address: CORE_ADDRESS as any,
         functionName: 'file_dispute',
         args: [id || '0', finalUrls, chatSample],
         value: disputeFee,
