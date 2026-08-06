@@ -85,5 +85,5 @@ export async function sendGenLayerTransaction({
   return txHash as `0x${string}`;
 }
 
-export const CORE_ADDRESS = ((import.meta as any).env?.VITE_CORE_ADDRESS || '0x2b96674AD3480e198B5704e6535bcC72Ab535A5e') as `0x${string}`;
-export const REGISTRY_ADDRESS = ((import.meta as any).env?.VITE_REGISTRY_ADDRESS || '0xd4826725f78449CD61D33A43dBb167ABE353Cbdc') as `0x${string}`;
+export const CORE_ADDRESS = ((import.meta as any).env?.VITE_CORE_ADDRESS || '0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805') as `0x${string}`;
+export const REGISTRY_ADDRESS = ((import.meta as any).env?.VITE_REGISTRY_ADDRESS || '0xACacF85af7532092d6D9c55E7b5EFD4B43069347') as `0x${string}`;
