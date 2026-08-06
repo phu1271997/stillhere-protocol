@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Scale, Plus, Send } from 'lucide-react';
-import { makeClient, CORE_ADDRESS } from '../lib/client';
+import { makeClient, CORE_ADDRESS, sendGenLayerTransaction } from '../lib/client';
 
 export const Dispute: React.FC = () => {
   const { id } = useParams();
@@ -37,9 +37,10 @@ export const Dispute: React.FC = () => {
       const client = makeClient(userAddr as `0x${string}`);
       const disputeFee = BigInt('2000000000000000');
 
-      const txHash = await client.writeContract({
-        account: ({ address: userAddr } as any),
-        address: CORE_ADDRESS as any,
+      const txHash = await sendGenLayerTransaction({
+        client,
+        userAddress: userAddr as `0x${string}`,
+        contractAddress: CORE_ADDRESS,
         functionName: 'file_dispute',
         args: [id || '0', finalUrls, chatSample],
         value: disputeFee,

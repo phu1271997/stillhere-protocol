@@ -1,9 +1,27 @@
 import { createClient, createAccount } from 'genlayer-js';
 import { simulator } from 'genlayer-js/chains';
+import { toRlp, toHex } from 'viem';
 
-if (typeof BigInt !== 'undefined' && !(BigInt.prototype as any).toJSON) {
+// Unconditional BigInt serialization fixes for JSON.stringify
+if (typeof BigInt !== 'undefined') {
   (BigInt.prototype as any).toJSON = function () {
-    return Number(this);
+    return this.toString();
+  };
+}
+
+if (typeof JSON !== 'undefined' && JSON.stringify) {
+  const origStringify = JSON.stringify;
+  JSON.stringify = function (value: any, replacer?: any, space?: any) {
+    const safeReplacer = (key: string, val: any) => {
+      if (typeof val === 'bigint') {
+        return val.toString();
+      }
+      if (typeof replacer === 'function') {
+        return replacer(key, val);
+      }
+      return val;
+    };
+    return origStringify(value, safeReplacer, space);
   };
 }
 
@@ -14,6 +32,49 @@ export function makeClient(userAddress?: string) {
   return createClient({
     chain: simulator,
     account: acct,
+  });
+}
+
+export async function sendGenLayerTransaction({
+  client,
+  userAddress,
+  contractAddress,
+  functionName,
+  args,
+  value = 0n,
+}: {
+  client: any;
+  userAddress: `0x${string}`;
+  contractAddress: `0x${string}`;
+  functionName: string;
+  args: any[];
+  value?: bigint;
+}): Promise<`0x${string}`> {
+  const methodParamsAsString = JSON.stringify(args);
+  const data = [functionName, methodParamsAsString];
+  const encodedData = toRlp(data.map(param => toHex(param)));
+
+  if (typeof window !== 'undefined' && window.ethereum) {
+    const valueHex = '0x' + value.toString(16);
+    const txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{
+        from: userAddress,
+        to: contractAddress,
+        data: encodedData,
+        value: valueHex,
+      }],
+    });
+    return txHash as `0x${string}`;
+  }
+
+  // Fallback to client.writeContract
+  return await client.writeContract({
+    account: createAccount(),
+    address: contractAddress,
+    functionName,
+    args,
+    value,
   });
 }
 

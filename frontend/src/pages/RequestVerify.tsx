@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Plus, Trash2, Send } from 'lucide-react';
 import { PrivacyNotice } from '../components/PrivacyNotice';
 import { computeProfileHash, computeChatHash, computeIdentityHash } from '../lib/hash';
-import { makeClient, CORE_ADDRESS } from '../lib/client';
+import { makeClient, CORE_ADDRESS, sendGenLayerTransaction } from '../lib/client';
 
 export const RequestVerify: React.FC = () => {
   const navigate = useNavigate();
@@ -74,9 +74,10 @@ export const RequestVerify: React.FC = () => {
       const baseFee = BigInt('1000000000000000');
       const totalVal = baseFee + BigInt(topupValNum);
 
-      const txHash = await client.writeContract({
-        account: ({ address: userAddr } as any),
-        address: CORE_ADDRESS as any,
+      const txHash = await sendGenLayerTransaction({
+        client,
+        userAddress: userAddr as `0x${string}`,
+        contractAddress: CORE_ADDRESS,
         functionName: 'request_verification',
         args: [
           profileHash,

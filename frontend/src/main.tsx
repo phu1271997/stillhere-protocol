@@ -3,9 +3,26 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
-if (typeof BigInt !== 'undefined' && !(BigInt.prototype as any).toJSON) {
+// Unconditional BigInt serialization fixes for JSON.stringify
+if (typeof BigInt !== 'undefined') {
   (BigInt.prototype as any).toJSON = function () {
-    return Number(this);
+    return this.toString();
+  };
+}
+
+if (typeof JSON !== 'undefined' && JSON.stringify) {
+  const origStringify = JSON.stringify;
+  JSON.stringify = function (value: any, replacer?: any, space?: any) {
+    const safeReplacer = (key: string, val: any) => {
+      if (typeof val === 'bigint') {
+        return val.toString();
+      }
+      if (typeof replacer === 'function') {
+        return replacer(key, val);
+      }
+      return val;
+    };
+    return origStringify(value, safeReplacer, space);
   };
 }
 
