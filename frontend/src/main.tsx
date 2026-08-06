@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
 
-// Unconditional BigInt serialization fixes for JSON.stringify
 if (typeof BigInt !== 'undefined') {
   (BigInt.prototype as any).toJSON = function () {
     return this.toString();
@@ -28,6 +28,8 @@ if (typeof JSON !== 'undefined' && JSON.stringify) {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>,
 );

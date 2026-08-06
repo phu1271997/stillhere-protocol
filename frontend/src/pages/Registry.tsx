@@ -1,31 +1,36 @@
 import React, { useState } from 'react';
-import { Database, Search, ShieldCheck } from 'lucide-react';
+import { Database, Search, ShieldCheck, AlertCircle } from 'lucide-react';
 import { makeClient, REGISTRY_ADDRESS } from '../lib/client';
+import { CaseCardSkeleton } from '../components/Skeleton';
 
 export const Registry: React.FC = () => {
   const [hashInput, setHashInput] = useState('');
   const [result, setResult] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!hashInput.trim()) return;
     setLoading(true);
     setSearched(true);
+    setError(null);
     try {
-      if (!window.ethereum) throw new Error('MetaMask is required.');
+      if (!window.ethereum) throw new Error('MetaMask is required to query registry state on studionet.');
       const [userAddr] = await window.ethereum.request({ method: 'eth_accounts' });
+      if (!userAddr) throw new Error('No wallet connected. Click Connect MetaMask first.');
 
-      const client = makeClient((userAddr || '0x0000000000000000000000000000000000000000') as `0x${string}`);
+      const client = makeClient(userAddr as `0x${string}`);
       const status = await client.readContract({
         account: ({ address: userAddr } as any),
         address: REGISTRY_ADDRESS as any,
         functionName: 'get_status',
-        args: [hashInput.trim()],
+        args: [hashInput.trim().toLowerCase()],
       });
       setResult(status);
     } catch (err: any) {
+      setError(err?.message || 'Registry lookup failed.');
       setResult({
         verdict_label: 'UNKNOWN',
         highest_confidence: 0,
@@ -50,28 +55,42 @@ export const Registry: React.FC = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSearch} className="flex gap-3">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-500 absolute left-4 top-3.5" />
+            <Search className="w-4 h-4 text-slate-500 absolute left-4 top-3.5" aria-hidden="true" />
             <input
               type="text"
               value={hashInput}
               onChange={e => setHashInput(e.target.value)}
               placeholder="Paste 0x... profile_hash"
+              aria-label="Profile hash"
               className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm font-mono text-slate-100 focus:outline-none focus:border-brand-500"
             />
           </div>
           <button
             type="submit"
-            disabled={loading}
-            className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-medium text-sm transition-all"
+            disabled={loading || !hashInput.trim()}
+            aria-label="Search registry for profile hash"
+            className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-medium text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Searching...' : 'Search'}
           </button>
         </form>
       </div>
 
-      {searched && (
+      {loading && <CaseCardSkeleton />}
+
+      {error && !loading && (
+        <div className="glass-card p-4 flex items-start gap-3 border border-rose-700/40" role="alert">
+          <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold text-rose-300">Registry lookup failed</span>
+            <span className="text-xs text-slate-400 break-words">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {searched && !loading && (
         <div className="glass-card p-6 flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Registry Lookup Result</span>
