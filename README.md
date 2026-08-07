@@ -66,8 +66,8 @@ See [`docs/ETHICS.md`](file:///Users/peter/Downloads/AI/Genlayer/7-StillHere/doc
 
 | Contract | Deployed Address |
 |---|---|
-| **StillHereCore** | [`0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805`](https://genlayer-explorer.vercel.app/address/0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805) |
-| **ScammerRegistry** | [`0xACacF85af7532092d6D9c55E7b5EFD4B43069347`](https://genlayer-explorer.vercel.app/address/0xACacF85af7532092d6D9c55E7b5EFD4B43069347) |
+| **StillHereCore** | [`0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805`](https://explorer-studio.genlayer.com/address/0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805) |
+| **ScammerRegistry** | [`0xACacF85af7532092d6D9c55E7b5EFD4B43069347`](https://explorer-studio.genlayer.com/address/0xACacF85af7532092d6D9c55E7b5EFD4B43069347) |
 
 > **Live app**: <https://stillhere-protocol.vercel.app>
 

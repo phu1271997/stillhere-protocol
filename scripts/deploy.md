@@ -7,14 +7,14 @@
 | **StillHereCore** | `0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805` |
 | **ScammerRegistry** | `0xACacF85af7532092d6D9c55E7b5EFD4B43069347` |
 
-Explorer: [`https://genlayer-explorer.vercel.app`](https://genlayer-explorer.vercel.app)
+Explorer: [`https://explorer-studio.genlayer.com`](https://explorer-studio.genlayer.com)
 
 ## Studionet Network Parameters
 
 - **Network Name:** GenLayer Studio Network (`studionet`)
 - **Chain ID:** `61999` (`0xF1EF`)
 - **RPC URL:** `https://studio.genlayer.com/api`
-- **Explorer:** `https://genlayer-explorer.vercel.app`
+- **Explorer:** `https://explorer-studio.genlayer.com`
 
 ## Constructor Parameters Used
 

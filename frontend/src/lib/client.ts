@@ -24,7 +24,7 @@ if (typeof JSON !== 'undefined' && JSON.stringify) {
 }
 
 export const STUDIONET_RPC = 'https://studio.genlayer.com/api';
-export const STUDIONET_EXPLORER = 'https://genlayer-explorer.vercel.app';
+export const STUDIONET_EXPLORER = 'https://explorer-studio.genlayer.com';
 export const STUDIONET_CHAIN_ID = 61999;
 
 export const studionet = defineChain({
