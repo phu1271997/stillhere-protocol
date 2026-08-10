@@ -2,6 +2,34 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.3.0] — 2026-08-10
+
+### Fixed — judge feedback ("preserve case_id, poll on-chain, render real verdict")
+
+Prior versions submitted `request_verification`, threw away the returned `case_id`, and routed the user to `/pending/0` → `/verdict/0` which rendered a **hardcoded fixture verdict**. That is now gone end-to-end.
+
+- **`RequestVerify`** submits the tx via MetaMask, then polls `eth_getTransactionByHash(txHash)` on studionet until it reaches `FINALIZED` / `ACCEPTED` and extracts the real `case_id` from the transaction's `result` field. Only THEN does it navigate — to `/pending/${realCaseId}?tx=${txHash}`. Submission metadata (URLs, hashes, requester, tx hash, timestamp) is persisted to a per-case entry in `localStorage` for the downstream pages.
+- **`Pending`** now polls `get_case(caseId)` on-chain every 4 s and transitions to the verdict page as soon as the state moves out of `PENDING` (VERDICT / RE_VERDICT / FAILED). If the read view is temporarily unavailable it also watches the parent tx status and hands off after the tx finalizes so the flow never dead-ends.
+- **`VerdictDetail`** reads `get_case(caseId)` + `get_verdict(caseId)` via a new low-level `readView` RPC helper (`eth_call` + JSON decode of the studio-returned hex payload) and renders the actual on-chain label, confidence, reason, red flags, and finalized-at. All fixture data removed. If the view read fails, the page falls back to on-chain tx data (from `eth_getTransactionByHash`) plus the persisted submission metadata, with a clear "view unavailable" banner — no fake verdict is ever shown.
+- **`Dispute`** takes the real `case_id` from the URL (no more `id || '0'`), signs `file_dispute` via MetaMask, polls the dispute tx to finalization, and records `disputeTxHash` back into the case store before navigating.
+- **`Registry`** attempts `get_status(profile_hash)` via the same helper and surfaces the raw error text on failure instead of silently returning an `UNKNOWN` stub.
+
+### Contracts
+
+- `_empty_verdict`, `_build_verdict_from_ai`, and every `DynArray[...]`/`TreeMap[...]` construction that previously used the plain generic-call syntax now goes through `gl.storage.inmem_allocate(...)` per SDK R18. The old form worked at runtime on studionet but broke storage-descriptor round-tripping in the packaged Python SDK, blocking any test coverage of the full lifecycle.
+
+### Tests
+
+- New `tests/test_lifecycle.py` — 21 regression tests covering:
+  - `_canon_hash`, `_addr_str` normalization (T6)
+  - E4 downgrade rule (`LIKELY_SCAM_RING` → `SUSPICIOUS` under thresholds)
+  - `_extract_json` handling of fenced / embedded / malformed JSON
+  - Canary defense (`_canary_token` shape + `_strip_canary` sanitization)
+  - `_build_jury_prompt` embeds the canary, the Forensic + Skeptic + Legal directive, the allowed label enum, and the allowed category enum
+  - A state-machine simulator that walks request → verdict → dispute → re-verdict and asserts `get_verdict` returns `verdict_v2` after a dispute — matching the read path the frontend depends on
+  - Validator semantics: same verdict / confidence-within-tolerance / same CRITICAL-and-WARNING category sets → agree; different verdict, different categories, or confidence >10 apart → disagree
+- The test module intentionally sidesteps `gltest`'s wasm loader (packaged SDK v0.2.16 is missing `gl.block` and some storage-slot indirection at the depth these contracts use) and runs the deterministic helpers directly against the real contract source with a minimal stub of the SDK surface. Same code path, no on-chain runtime dependency.
+
 ## [0.2.0] — 2026-08-06
 
 ### Fixed — Critical

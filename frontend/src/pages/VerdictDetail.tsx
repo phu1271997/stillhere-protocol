@@ -1,55 +1,201 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { VerdictCard } from '../components/VerdictCard';
-import { Scale, ArrowLeft, ExternalLink } from 'lucide-react';
+import { VerdictSkeleton } from '../components/Skeleton';
+import { Scale, ArrowLeft, ExternalLink, Info, AlertCircle } from 'lucide-react';
+import {
+  CORE_ADDRESS,
+  readView,
+  fetchTransaction,
+  explorerTxUrl,
+  explorerAddressUrl,
+  StudionetTx,
+} from '../lib/client';
+import { loadCase, StoredCaseMeta } from '../lib/caseStore';
+
+interface OnChainCase {
+  state: string;
+  submitted_at: number;
+  fee_paid: number;
+  bounty_pool: number;
+  requester?: string;
+  profile_hash?: string;
+  chat_sample_hash?: string;
+  claimed_identity_hash?: string;
+  public_urls?: string[];
+  image_urls?: string[];
+  dispute_evidence_urls?: string[];
+  verdict_v1?: any;
+  verdict_v2?: any;
+}
+
+interface OnChainVerdict {
+  label: string;
+  confidence: number;
+  reason: string;
+  red_flags: Array<{ category: string; severity: string; evidence: string }>;
+  finalized_at: number;
+}
+
+function normalizeVerdict(v: any): OnChainVerdict | null {
+  if (!v || typeof v !== 'object') return null;
+  return {
+    label: String(v.label ?? 'INCONCLUSIVE'),
+    confidence: Number(v.confidence ?? 0),
+    reason: String(v.reason ?? ''),
+    red_flags: Array.isArray(v.red_flags) ? v.red_flags : [],
+    finalized_at: Number(v.finalized_at ?? 0),
+  };
+}
 
 export const VerdictDetail: React.FC = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const caseId = id || '';
+  const txHash = searchParams.get('tx');
 
-  const [verdict] = useState({
-    label: 'SUSPICIOUS',
-    confidence: 78,
-    reason: 'Profile contains conflicting career history across public sources. Reverse image search indicates one photo matched an unrelated social media account created in 2021. Chat patterns show early emotional escalation combined with financial distress queries.',
-    redFlags: [
-      {
-        category: 'STOLEN_PHOTO',
-        severity: 'CRITICAL',
-        evidence: 'Primary profile photo matches unrelated account on external platform.',
-      },
-      {
-        category: 'URGENT_EMOTIONAL',
-        severity: 'WARNING',
-        evidence: 'Urgent assistance requested early in communication timeline.',
-      },
-      {
-        category: 'IDENTITY_MISMATCH',
-        severity: 'WARNING',
-        evidence: 'Claimed employment details inconsistent with public registry records.',
-      },
-    ],
-    finalizedAt: Math.floor(Date.now() / 1000) - 300,
-  });
+  const [caseData, setCaseData] = useState<OnChainCase | null>(null);
+  const [verdict, setVerdict] = useState<OnChainVerdict | null>(null);
+  const [tx, setTx] = useState<StudionetTx | null>(null);
+  const [stored, setStored] = useState<StoredCaseMeta | null>(null);
+  const [viewError, setViewError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!caseId) return;
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setStored(loadCase(caseId));
+
+      const [caseR, verdictR, txR] = await Promise.all([
+        readView<OnChainCase>(CORE_ADDRESS, 'get_case', [caseId]),
+        readView<OnChainVerdict>(CORE_ADDRESS, 'get_verdict', [caseId]),
+        txHash ? fetchTransaction(txHash as `0x${string}`) : Promise.resolve(null),
+      ]);
+      if (cancelled) return;
+
+      if (caseR.ok && caseR.data) setCaseData(caseR.data);
+      if (verdictR.ok && verdictR.data) setVerdict(normalizeVerdict(verdictR.data));
+      if (txR) setTx(txR);
+
+      if (!caseR.ok && !verdictR.ok) {
+        setViewError(caseR.error || verdictR.error || 'view read unavailable');
+      }
+      setLoading(false);
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [caseId, txHash]);
+
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto py-8 flex flex-col gap-6">
+        <VerdictSkeleton />
+      </div>
+    );
+  }
+
+  const state = caseData?.state ?? (tx?.status === 'FINALIZED' ? 'PROCESSING' : 'PENDING');
+  const publicUrls = caseData?.public_urls ?? stored?.publicUrls ?? [];
+  const requester = caseData?.requester ?? tx?.from_address ?? stored?.requester;
+  const submittedAt = caseData?.submitted_at ?? stored?.submittedAt ?? 0;
 
   return (
     <div className="max-w-3xl mx-auto py-8 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <Link to="/" className="text-xs font-medium text-slate-400 hover:text-slate-200 flex items-center gap-1">
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
         <span className="font-mono text-xs text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
-          Case ID: #{id || '0'}
+          Case ID: #{caseId}
         </span>
       </div>
 
-      <VerdictCard
-        label={verdict.label}
-        confidence={verdict.confidence}
-        reason={verdict.reason}
-        redFlags={verdict.redFlags}
-        finalizedAt={verdict.finalizedAt}
-      />
+      {viewError && !verdict && (
+        <div className="glass-card p-4 flex items-start gap-3 border border-amber-700/40" role="status">
+          <Info className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div className="flex flex-col gap-1 text-xs">
+            <span className="font-semibold text-amber-300">On-chain view read unavailable right now</span>
+            <span className="text-slate-400">
+              {viewError}. Studionet view execution is intermittently offline — the case + verdict are finalized on-chain
+              (see the transaction below). This page will re-fetch when the view route recovers.
+            </span>
+          </div>
+        </div>
+      )}
 
-      <div className="glass-panel p-6 flex items-center justify-between">
+      {verdict ? (
+        <VerdictCard
+          label={verdict.label}
+          confidence={verdict.confidence}
+          reason={verdict.reason}
+          redFlags={verdict.red_flags}
+          finalizedAt={verdict.finalized_at}
+        />
+      ) : (
+        <div className="glass-panel p-6 flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-slate-400" />
+            <h3 className="text-lg font-bold text-white">Verdict not yet materialized</h3>
+          </div>
+          <p className="text-sm text-slate-400">
+            Case state: <span className="font-mono text-slate-200">{state}</span>. The AI Jury runs inside the
+            <code className="mx-1 px-1.5 py-0.5 bg-slate-950 rounded text-brand-300 text-xs">request_verification</code>
+            transaction; once it finalizes on studionet the verdict will render here automatically on next load.
+          </p>
+        </div>
+      )}
+
+      <div className="glass-panel p-6 flex flex-col gap-3 text-xs">
+        <h4 className="text-xs uppercase tracking-wider font-semibold text-slate-400">On-Chain Case Metadata</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <MetaRow label="State" value={state} mono />
+          <MetaRow label="Submitted At" value={submittedAt ? new Date(submittedAt * 1000).toLocaleString() : '—'} />
+          <MetaRow label="Requester" value={requester || '—'} mono truncate />
+          <MetaRow label="Profile hash" value={caseData?.profile_hash || stored?.profileHash || '—'} mono truncate />
+          <MetaRow label="Fee paid (wei)" value={caseData?.fee_paid?.toString() || '—'} mono />
+          <MetaRow label="Bounty pool (wei)" value={caseData?.bounty_pool?.toString() || stored?.bountyTopupWei || '—'} mono />
+        </div>
+
+        {publicUrls.length > 0 && (
+          <div className="flex flex-col gap-1 pt-3 border-t border-slate-800">
+            <span className="text-slate-400 uppercase tracking-wider">Public URLs</span>
+            <ul className="flex flex-col gap-1">
+              {publicUrls.map((u, i) => (
+                <li key={i} className="font-mono text-slate-300 truncate">
+                  <a href={u} target="_blank" rel="noreferrer" className="hover:text-brand-300">{u}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-1 pt-3 border-t border-slate-800">
+          <span className="text-slate-400 uppercase tracking-wider">On-chain Links</span>
+          <a
+            href={explorerAddressUrl(CORE_ADDRESS)}
+            target="_blank"
+            rel="noreferrer"
+            className="font-mono text-brand-400 hover:text-brand-300 flex items-center gap-1"
+          >
+            Core contract <ExternalLink className="w-3 h-3" />
+          </a>
+          {txHash && (
+            <a
+              href={explorerTxUrl(txHash)}
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono text-brand-400 hover:text-brand-300 flex items-center gap-1"
+            >
+              Request tx <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      </div>
+
+      <div className="glass-panel p-6 flex items-center justify-between flex-wrap gap-3">
         <div>
           <h4 className="font-bold text-white text-base">Dispute or Counter-Evidence</h4>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -57,7 +203,7 @@ export const VerdictDetail: React.FC = () => {
           </p>
         </div>
         <Link
-          to={`/dispute/${id || '0'}`}
+          to={`/dispute/${caseId}`}
           className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm flex items-center gap-2 transition-all shrink-0"
         >
           <Scale className="w-4 h-4 text-amber-400" />
@@ -67,3 +213,10 @@ export const VerdictDetail: React.FC = () => {
     </div>
   );
 };
+
+const MetaRow: React.FC<{ label: string; value: string; mono?: boolean; truncate?: boolean }> = ({ label, value, mono, truncate }) => (
+  <div className="flex flex-col gap-0.5">
+    <span className="text-slate-400 uppercase tracking-wider">{label}</span>
+    <span className={`text-slate-100 ${mono ? 'font-mono' : ''} ${truncate ? 'truncate' : ''}`}>{value}</span>
+  </div>
+);

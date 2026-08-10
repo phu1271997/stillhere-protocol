@@ -83,7 +83,7 @@ class Contract(gl.Contract):
         key = _canon_hash(profile_hash)
         if len(key) == 0:
             raise gl.vm.UserError("profile_hash required")
-        arr = self.watchers.get(key, DynArray[Address]())
+        arr = self.watchers.get(key, gl.storage.inmem_allocate(DynArray[Address]))
         arr.append(_to_address(watcher))
         self.watchers[key] = arr
 

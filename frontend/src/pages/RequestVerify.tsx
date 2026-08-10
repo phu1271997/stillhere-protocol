@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Plus, Trash2, Send } from 'lucide-react';
 import { PrivacyNotice } from '../components/PrivacyNotice';
 import { computeProfileHash, computeChatHash, computeIdentityHash } from '../lib/hash';
-import { makeClient, CORE_ADDRESS, sendGenLayerTransaction } from '../lib/client';
+import { CORE_ADDRESS, sendGenLayerTransaction, waitForFinalizedTx } from '../lib/client';
+import { saveCase } from '../lib/caseStore';
 
 export const RequestVerify: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ export const RequestVerify: React.FC = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
   const handleAddPublicUrl = () => {
     if (publicUrlInput.trim()) {
@@ -41,6 +43,7 @@ export const RequestVerify: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setStatusMsg(null);
     if (publicUrls.length === 0 && !publicUrlInput.trim()) {
       setError('At least one public profile URL is required.');
       return;
@@ -58,6 +61,7 @@ export const RequestVerify: React.FC = () => {
     try {
       if (!window.ethereum) throw new Error('MetaMask is required.');
       const [userAddr] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      if (!userAddr) throw new Error('No wallet account available.');
 
       const profileHash = computeProfileHash(finalPublicUrls[0], claimedName);
       const chatHash = computeChatHash(chatSample);
@@ -68,14 +72,12 @@ export const RequestVerify: React.FC = () => {
         country: claimedCountry,
       });
 
-      const client = makeClient(userAddr as `0x${string}`);
-
       const topupValNum = Number(bountyTopup || '0');
       const baseFee = BigInt('1000000000000000');
       const totalVal = baseFee + BigInt(topupValNum);
 
+      setStatusMsg('Waiting for MetaMask signature…');
       const txHash = await sendGenLayerTransaction({
-        client,
         userAddress: userAddr as `0x${string}`,
         contractAddress: CORE_ADDRESS,
         functionName: 'request_verification',
@@ -91,9 +93,32 @@ export const RequestVerify: React.FC = () => {
         value: totalVal,
       });
 
-      navigate(`/pending/0?tx=${txHash}`);
+      setStatusMsg('Transaction submitted. Polling studionet for finalization + case id…');
+      const finalized = await waitForFinalizedTx(txHash, { pollMs: 3000, timeoutMs: 240_000 });
+      if (!finalized.caseId) {
+        throw new Error('Finalized transaction returned no case id.');
+      }
+      const caseId = finalized.caseId;
+
+      saveCase({
+        caseId,
+        txHash,
+        requester: (userAddr as string).toLowerCase(),
+        profileHash: profileHash.toLowerCase(),
+        claimedIdentityHash: identityHash.toLowerCase(),
+        chatSampleHash: chatHash.toLowerCase(),
+        publicUrls: finalPublicUrls,
+        imageUrls: finalImageUrls,
+        submittedAt: Math.floor(Date.now() / 1000),
+        claimedName,
+        claimedCountry,
+        bountyTopupWei: String(topupValNum),
+      });
+
+      navigate(`/pending/${caseId}?tx=${txHash}`);
     } catch (err: any) {
       setError(err.message || 'Transaction submission failed');
+      setStatusMsg(null);
     } finally {
       setSubmitting(false);
     }
@@ -113,8 +138,14 @@ export const RequestVerify: React.FC = () => {
         <PrivacyNotice />
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-950/80 border border-rose-600/60 text-xs text-rose-300">
+          <div className="mb-6 p-4 rounded-xl bg-rose-950/80 border border-rose-600/60 text-xs text-rose-300" role="alert">
             {error}
+          </div>
+        )}
+
+        {statusMsg && !error && (
+          <div className="mb-6 p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300" aria-live="polite">
+            {statusMsg}
           </div>
         )}
 
@@ -144,7 +175,7 @@ export const RequestVerify: React.FC = () => {
                 {publicUrls.map((u, i) => (
                   <li key={i} className="text-xs font-mono bg-slate-950/80 p-2 rounded border border-slate-800 flex justify-between items-center text-slate-300">
                     <span className="truncate">{u}</span>
-                    <button type="button" onClick={() => setPublicUrls(publicUrls.filter((_, idx) => idx !== i))}>
+                    <button type="button" onClick={() => setPublicUrls(publicUrls.filter((_, idx) => idx !== i))} aria-label={`Remove URL ${u}`}>
                       <Trash2 className="w-3.5 h-3.5 text-rose-400 hover:text-rose-300" />
                     </button>
                   </li>
@@ -194,7 +225,7 @@ export const RequestVerify: React.FC = () => {
             className="mt-2 w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-base shadow-xl shadow-brand-600/25 flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
           >
             <Send className="w-4 h-4" />
-            <span>{submitting ? 'Submitting to AI Jury...' : 'Submit Request'}</span>
+            <span>{submitting ? (statusMsg || 'Submitting to AI Jury…') : 'Submit Request'}</span>
           </button>
         </form>
       </div>

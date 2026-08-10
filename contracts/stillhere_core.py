@@ -116,12 +116,28 @@ def _extract_json(raw: typing.Any) -> typing.Optional[dict]:
     except Exception:
         return None
 
+def _new_dyn_str() -> "DynArray[str]":
+    return gl.storage.inmem_allocate(DynArray[str])
+
+
+def _new_dyn_redflag() -> "DynArray[RedFlag]":
+    return gl.storage.inmem_allocate(DynArray[RedFlag])
+
+
+def _new_map_str_addr() -> "TreeMap[str, Address]":
+    return gl.storage.inmem_allocate(TreeMap[str, Address])
+
+
+def _new_map_str_bool() -> "TreeMap[str, bool]":
+    return gl.storage.inmem_allocate(TreeMap[str, bool])
+
+
 def _empty_verdict() -> Verdict:
     return Verdict(
         label=VERDICT_INCONCLUSIVE,
         confidence=u8(0),
         reason="",
-        red_flags=DynArray[RedFlag](),
+        red_flags=_new_dyn_redflag(),
         finalized_at=bigint(0),
     )
 
@@ -195,11 +211,11 @@ class Contract(gl.Contract):
             submitted_at=bigint(gl.block.timestamp),
             verdict_v1=_empty_verdict(),
             verdict_v2=_empty_verdict(),
-            dispute_evidence_urls=DynArray[str](),
+            dispute_evidence_urls=_new_dyn_str(),
         )
         self.cases[case_id_str] = c
 
-        case_list = self.profile_to_cases.get(canon_profile, DynArray[str]())
+        case_list = self.profile_to_cases.get(canon_profile, _new_dyn_str())
         case_list.append(case_id_str)
         self.profile_to_cases[canon_profile] = case_list
 
@@ -219,11 +235,11 @@ class Contract(gl.Contract):
         if len(canon_ev) == 0:
             raise gl.vm.UserError("evidence_hash required")
 
-        arr = self.contributions.get(case_id_str, DynArray[str]())
+        arr = self.contributions.get(case_id_str, _new_dyn_str())
         arr.append(evidence_url)
         self.contributions[case_id_str] = arr
 
-        user_map = self.contributors.get(case_id_str, TreeMap[str, Address]())
+        user_map = self.contributors.get(case_id_str, _new_map_str_addr())
         if canon_ev in user_map:
             raise gl.vm.UserError("evidence_hash already registered for this case")
         user_map[canon_ev] = _to_address(gl.message.sender_address)
@@ -257,14 +273,14 @@ class Contract(gl.Contract):
         if case_id_str not in self.cases:
             raise gl.vm.UserError("case not found")
         canon_ev = _canon_hash(evidence_hash)
-        user_map = self.contributors.get(case_id_str, TreeMap[str, Address]())
+        user_map = self.contributors.get(case_id_str, _new_map_str_addr())
         if canon_ev not in user_map:
             raise gl.vm.UserError("no contribution registered for this hash")
         contrib_addr = _to_address(user_map[canon_ev])
         if _addr_str(contrib_addr) != _addr_str(_to_address(gl.message.sender_address)):
             raise gl.vm.UserError("caller is not the registered contributor")
 
-        claimed_map = self.contribution_claimed.get(case_id_str, TreeMap[str, bool]())
+        claimed_map = self.contribution_claimed.get(case_id_str, _new_map_str_bool())
         if claimed_map.get(canon_ev, False):
             raise gl.vm.UserError("bounty already claimed for this contribution")
 
@@ -325,7 +341,7 @@ class Contract(gl.Contract):
 
     @gl.public.view
     def list_cases_by_profile(self, profile_hash: str) -> DynArray[str]:
-        return self.profile_to_cases.get(_canon_hash(profile_hash), DynArray[str]())
+        return self.profile_to_cases.get(_canon_hash(profile_hash), _new_dyn_str())
 
     @gl.public.write
     def withdraw_treasury(self, to_addr: Address, amount: bigint) -> None:
@@ -344,7 +360,7 @@ class Contract(gl.Contract):
         public_urls = list(c.public_urls)
         image_urls = list(c.image_urls)
         counter_urls = list(c.dispute_evidence_urls) if is_dispute_round else []
-        contrib_urls = list(self.contributions.get(case_id_str, DynArray[str]()))
+        contrib_urls = list(self.contributions.get(case_id_str, _new_dyn_str()))
         scam_thr_c = int(self.scam_confidence_threshold)
         scam_thr_f = int(self.scam_critical_flags_required)
         case_id_int = int(case_id_str)
@@ -473,7 +489,7 @@ class Contract(gl.Contract):
         reg.upsert_status(c.profile_hash, v.label, v.confidence)
 
     def _build_verdict_from_ai(self, ai: dict) -> Verdict:
-        flags = DynArray[RedFlag]()
+        flags = _new_dyn_redflag()
         for f in ai.get("red_flags", [])[:20]:
             if isinstance(f, dict):
                 cat = str(f.get("category", ""))[:64]
