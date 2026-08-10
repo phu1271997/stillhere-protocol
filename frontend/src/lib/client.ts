@@ -195,5 +195,5 @@ export function explorerAddressUrl(addr: string): string {
   return `${STUDIONET_EXPLORER}/address/${addr}`;
 }
 
-export const CORE_ADDRESS = ((import.meta as any).env?.VITE_CORE_ADDRESS || '0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805') as `0x${string}`;
-export const REGISTRY_ADDRESS = ((import.meta as any).env?.VITE_REGISTRY_ADDRESS || '0xACacF85af7532092d6D9c55E7b5EFD4B43069347') as `0x${string}`;
+export const CORE_ADDRESS = ((import.meta as any).env?.VITE_CORE_ADDRESS || '0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5') as `0x${string}`;
+export const REGISTRY_ADDRESS = ((import.meta as any).env?.VITE_REGISTRY_ADDRESS || '0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df') as `0x${string}`;
