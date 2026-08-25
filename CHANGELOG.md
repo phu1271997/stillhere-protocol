@@ -2,6 +2,17 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.5.0] — 2026-08-25
+
+### Added — Explorer submission prep
+- **`/contribute/:id` page** — first UI caller for `contribute_evidence(case_id, evidence_url, evidence_hash)`. Hashes the URL as `keccak256(url.toLowerCase())` client-side for dedup, signs the tx via MetaMask, and polls to finalization. Fixes the M1 dead-code blocker for that method and legitimizes the `Evidence Assessment` category tag claim on the Explorer submission.
+- **Contribute Evidence button on VerdictDetail** — sits next to File Dispute so a reviewer can drive both flows from the same page.
+- **`frontend/public/logo.svg` + `logo-1024.png` + `logo-512.png`** — heart-clipped-inside-shield mark using brand green `#22C55E`, matches app accent. Rendered via `qlmanage`. 1.1 MB / 300 KB, under the 2 MB Portal cap. Also wired as favicon + apple-touch-icon in `index.html`.
+- **`scripts/explorer-submission/`** — full char-counted Explorer submission draft: `oneliner.txt` (132/180), `description.txt` (988/1000), `expected.txt` (455/500), `SUBMISSION.md` (full doc with category rationale, per-tag contract-function mapping, "How to try it" steps, honest known-limitation disclosure for the studionet view route).
+
+### Known limitation (disclosed)
+- Studio `eth_call` view route returns `exit_code 1` for both contracts (a Studio-runtime-level failure — not caused by our contract code; `gen_getContractSchema` loads fine, write path executes fine, verdicts land on-chain). The frontend already handles this with a "view unavailable" banner + retry button + explicit Explorer link on both Registry and VerdictDetail pages. The Explorer submission text points reviewers to the transaction detail page on `explorer-studio.genlayer.com` for the on-chain verdict.
+
 ## [0.4.0] — 2026-08-25
 
 ### Fixed

@@ -217,20 +217,30 @@ export const VerdictDetail: React.FC = () => {
         </div>
       </div>
 
-      <div className="glass-panel p-6 flex items-center justify-between flex-wrap gap-3">
+      <div className="glass-panel p-6 flex flex-col gap-4">
         <div>
-          <h4 className="font-bold text-white text-base">Dispute or Counter-Evidence</h4>
+          <h4 className="font-bold text-white text-base">Take action on this case</h4>
           <p className="text-xs text-slate-400 mt-0.5">
-            If you are the Subject or have additional verification proof, submit counter-evidence for Round 2 Jury.
+            Anyone with corroborating evidence can contribute a URL for the jury to weigh. The subject can file a dispute
+            to trigger a Round 2 AI Jury re-adjudication.
           </p>
         </div>
-        <Link
-          to={`/dispute/${caseId}`}
-          className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm flex items-center gap-2 transition-all shrink-0"
-        >
-          <Scale className="w-4 h-4 text-amber-400" />
-          <span>File Dispute</span>
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            to={`/contribute/${caseId}`}
+            className="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-medium text-sm flex items-center gap-2 transition-all"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span>Contribute Evidence</span>
+          </Link>
+          <Link
+            to={`/dispute/${caseId}`}
+            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm flex items-center gap-2 transition-all"
+          >
+            <Scale className="w-4 h-4 text-amber-400" />
+            <span>File Dispute (Round 2)</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

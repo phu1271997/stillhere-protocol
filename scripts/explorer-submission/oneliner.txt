@@ -1,0 +1,1 @@
+A decentralized AI jury on GenLayer that reads public profiles and weighs evidence to help families flag suspected romance scammers.

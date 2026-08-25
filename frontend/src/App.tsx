@@ -12,6 +12,7 @@ import { Dispute } from './pages/Dispute';
 import { Registry } from './pages/Registry';
 import { HowItWorks } from './pages/HowItWorks';
 import { Cases } from './pages/Cases';
+import { Contribute } from './pages/Contribute';
 
 export const App: React.FC = () => {
   return (
@@ -54,6 +55,7 @@ export const App: React.FC = () => {
               <Route path="/pending/:id" element={<Pending />} />
               <Route path="/verdict/:id" element={<VerdictDetail />} />
               <Route path="/dispute/:id" element={<Dispute />} />
+              <Route path="/contribute/:id" element={<Contribute />} />
               <Route path="/registry" element={<Registry />} />
               <Route path="/cases" element={<Cases />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
