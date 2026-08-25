@@ -2,6 +2,28 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.0] — 2026-08-25
+
+### Fixed
+- **README broken file:// links** — `docs/ETHICS.md` and `scripts/deploy.md` pointed at an absolute `/Users/peter/Downloads/AI/Genlayer/7-StillHere/…` path from an earlier working tree, breaking on the public repo. Now relative.
+
+### Added
+- **Reviewer Walkthrough (README §7)** — 5-minute click-through of the request → verdict → dispute flow, including the demo-safe fallback story when the studionet `eth_call` view route is intermittently offline. Also adds §8 layout map and §9 Submission block with contract addresses, live URL, repo URL, and the "why this dies without GenLayer" pitch line.
+- **`/cases` route** — a per-browser list of every case the user has submitted this session, sourced from the same `localStorage` write path `RequestVerify` uses. One-click jump into pending / verdict / dispute pages for each case, plus a link out to the tx on Explorer.
+- **Retry buttons** on `Registry` and `VerdictDetail` — the studionet view route (`eth_call` for `get_case` / `get_status`) currently returns `execution failed / exit_code 1` for these contracts; the retry re-runs the read without a full page reload, and both pages now surface a direct "Inspect on Explorer" link so the reviewer can confirm the on-chain state independently.
+
+### Tests
+- **63 tests passing** (up from 26). Filled every previously-`assert True` placeholder with real deterministic coverage:
+  - `test_ai_jury_scenarios.py` — 7 tests: the four verdict labels + the E4 boundary (LIKELY_SCAM_RING → SUSPICIOUS when confidence < 85 OR CRITICAL flags < 2) + JSON-roundtrip survival + missing-canary detection.
+  - `test_dispute_flow.py` — 5 tests: file_dispute state gate (only VERDICT), `get_verdict` returns v2 iff RE_VERDICT (invariant `VerdictDetail.tsx` relies on), `MAX_DISPUTES == 1`, dispute-round canary disjoint from request-round canary.
+  - `test_edge_cases.py` — 12 tests: `_extract_json` survives empty / whitespace / non-dict-root / trailing-garbage input; confidence-boundary sweep across the E4 threshold; canary position-agnostic scrub; hash canonicalization collapses case-only variants; the eight red-flag categories + four verdict labels are all wired into the prompt.
+  - `test_registry_cache.py` — 6 tests: default row shape matches the Registry page contract; monotonic case_count; **anti-whitewash invariant** (a later low-confidence LIKELY_REAL cannot unseat an earlier high-confidence SUSPICIOUS); case-insensitive key normalization prevents split rows.
+  - `test_request_and_verdict.py` — 12 tests: every `request_verification` guard branch (URL bounds 1..6, image bounds 0..3, chat sample 0..5000 chars, non-negative topup, sufficient paid fee, non-empty profile_hash) + verdict clamp / default / truncation semantics.
+- Shared `genlayer` SDK stub extracted from `test_lifecycle.py` into `conftest.py` — one source of truth for the module-level `import genlayer` shim, reused by all seven test modules.
+
+### Contracts
+- No contract source changes. Deployed studionet addresses unchanged from 0.3.0.
+
 ## [0.3.0] — 2026-08-10
 
 ### Fixed — judge feedback ("preserve case_id, poll on-chain, render real verdict")

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { ShieldCheck, Database, HelpCircle, HeartHandshake } from 'lucide-react';
+import { ShieldCheck, Database, HelpCircle, HeartHandshake, FolderOpen } from 'lucide-react';
 import { ConnectWallet } from './components/ConnectWallet';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
 
@@ -11,6 +11,7 @@ import { VerdictDetail } from './pages/VerdictDetail';
 import { Dispute } from './pages/Dispute';
 import { Registry } from './pages/Registry';
 import { HowItWorks } from './pages/HowItWorks';
+import { Cases } from './pages/Cases';
 
 export const App: React.FC = () => {
   return (
@@ -30,6 +31,9 @@ export const App: React.FC = () => {
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
                 <Link to="/request" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
                   <HeartHandshake className="w-4 h-4" /> Request Verify
+                </Link>
+                <Link to="/cases" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
+                  <FolderOpen className="w-4 h-4" /> My Cases
                 </Link>
                 <Link to="/registry" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
                   <Database className="w-4 h-4" /> Registry
@@ -51,6 +55,7 @@ export const App: React.FC = () => {
               <Route path="/verdict/:id" element={<VerdictDetail />} />
               <Route path="/dispute/:id" element={<Dispute />} />
               <Route path="/registry" element={<Registry />} />
+              <Route path="/cases" element={<Cases />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
             </Routes>
           </main>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { VerdictCard } from '../components/VerdictCard';
 import { VerdictSkeleton } from '../components/Skeleton';
-import { Scale, ArrowLeft, ExternalLink, Info, AlertCircle } from 'lucide-react';
+import { Scale, ArrowLeft, ExternalLink, Info, AlertCircle, RefreshCcw } from 'lucide-react';
 import {
   CORE_ADDRESS,
   readView,
@@ -60,6 +60,7 @@ export const VerdictDetail: React.FC = () => {
   const [stored, setStored] = useState<StoredCaseMeta | null>(null);
   const [viewError, setViewError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refetchToken, setRefetchToken] = useState(0);
 
   useEffect(() => {
     if (!caseId) return;
@@ -68,6 +69,7 @@ export const VerdictDetail: React.FC = () => {
     async function load() {
       setLoading(true);
       setStored(loadCase(caseId));
+      setViewError(null);
 
       const [caseR, verdictR, txR] = await Promise.all([
         readView<OnChainCase>(CORE_ADDRESS, 'get_case', [caseId]),
@@ -87,7 +89,7 @@ export const VerdictDetail: React.FC = () => {
     }
     load();
     return () => { cancelled = true; };
-  }, [caseId, txHash]);
+  }, [caseId, txHash, refetchToken]);
 
   if (loading) {
     return (
@@ -116,12 +118,32 @@ export const VerdictDetail: React.FC = () => {
       {viewError && !verdict && (
         <div className="glass-card p-4 flex items-start gap-3 border border-amber-700/40" role="status">
           <Info className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-          <div className="flex flex-col gap-1 text-xs">
+          <div className="flex flex-col gap-2 text-xs">
             <span className="font-semibold text-amber-300">On-chain view read unavailable right now</span>
             <span className="text-slate-400">
-              {viewError}. Studionet view execution is intermittently offline — the case + verdict are finalized on-chain
-              (see the transaction below). This page will re-fetch when the view route recovers.
+              {viewError}. Studionet's <code className="text-brand-300">eth_call</code> view route is intermittently offline —
+              the case + verdict are finalized on-chain (see the transaction link below). This page never renders a
+              fabricated verdict; it will populate as soon as the view route recovers.
             </span>
+            <div className="flex items-center gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => setRefetchToken(t => t + 1)}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-medium"
+              >
+                <RefreshCcw className="w-3 h-3" /> Retry view read
+              </button>
+              {txHash && (
+                <a
+                  href={explorerTxUrl(txHash)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-brand-400 hover:text-brand-300"
+                >
+                  Inspect tx on Explorer <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
           </div>
         </div>
       )}

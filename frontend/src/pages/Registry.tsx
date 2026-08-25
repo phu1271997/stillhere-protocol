@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Database, Search, ShieldCheck, AlertCircle, Info } from 'lucide-react';
-import { readView, REGISTRY_ADDRESS } from '../lib/client';
+import { Database, Search, ShieldCheck, AlertCircle, Info, ExternalLink, RefreshCcw } from 'lucide-react';
+import { readView, REGISTRY_ADDRESS, explorerAddressUrl } from '../lib/client';
 import { CaseCardSkeleton } from '../components/Skeleton';
 
 interface ProfileStatus {
@@ -18,23 +18,20 @@ export const Registry: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!hashInput.trim()) return;
+  const runLookup = async (key: string) => {
     setLoading(true);
     setSearched(true);
     setError(null);
     setWarning(null);
     setResult(null);
     try {
-      const key = hashInput.trim().toLowerCase();
       const view = await readView<ProfileStatus>(REGISTRY_ADDRESS, 'get_status', [key]);
       if (view.ok && view.data && typeof view.data === 'object') {
         setResult(view.data);
       } else {
         setWarning(
           view.error
-            ? `Registry view read failed: ${view.error}. Status is written on-chain during each verdict — check the studionet explorer for the profile hash.`
+            ? `Studionet view execution is intermittent (${view.error}). The registry row is still written on-chain during each verdict — click the contract link below to inspect it directly on the GenLayer Explorer.`
             : 'Registry returned an unexpected payload.',
         );
       }
@@ -43,6 +40,17 @@ export const Registry: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!hashInput.trim()) return;
+    await runLookup(hashInput.trim().toLowerCase());
+  };
+
+  const handleRetry = async () => {
+    if (!hashInput.trim()) return;
+    await runLookup(hashInput.trim().toLowerCase());
   };
 
   return (
@@ -96,9 +104,26 @@ export const Registry: React.FC = () => {
       {warning && !loading && !error && (
         <div className="glass-card p-4 flex items-start gap-3 border border-amber-700/40" role="status">
           <Info className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-          <div className="flex flex-col gap-1 text-xs">
-            <span className="font-semibold text-amber-300">Read view unavailable</span>
+          <div className="flex flex-col gap-2 text-xs">
+            <span className="font-semibold text-amber-300">Studionet view route unavailable right now</span>
             <span className="text-slate-400">{warning}</span>
+            <div className="flex items-center gap-3 pt-1">
+              <button
+                type="button"
+                onClick={handleRetry}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-medium"
+              >
+                <RefreshCcw className="w-3 h-3" /> Retry
+              </button>
+              <a
+                href={explorerAddressUrl(REGISTRY_ADDRESS)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-brand-400 hover:text-brand-300"
+              >
+                Inspect on Explorer <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
           </div>
         </div>
       )}
