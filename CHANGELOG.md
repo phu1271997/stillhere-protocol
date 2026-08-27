@@ -2,6 +2,26 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.7.0] — 2026-08-27
+
+### Added
+- **ui:** logo now renders in the header + footer (SVG), replacing the placeholder shield icon.
+- **ui:** rewritten footer — 4 columns (Protocol / Learn / On-chain / Community) with links to every doc, both contract Explorer pages, GenLayer Studio + Portal, and a chain-id badge row.
+- **test:** pytest marker tiers (`fast` / `slow` / `studionet` / `localnet`) declared in `pytest.ini`. `conftest.py` auto-marks any un-tagged test as `fast` so `pytest -m fast` selects the 63-test regression tier and `-m slow` selects the gltest wasm smoke.
+- **test:** `tests/test_gltest_wasm.py` — slow-tier gltest smoke that deploys `ScammerRegistry` and reads back the default row. Skips gracefully when `gltest` / network / wasm-SDK gap is present, so it never fails the fast tier.
+- **chore:** `Makefile` with `fast` / `slow` / `test` / `build` / `deploy` / `deliverables-check` / `clean` targets.
+- **chore:** `scripts/deliverables_check.py` — hard char-count gate against Portal caps (180 / 1000 / 500). Ties the Makefile target.
+- **feat:** `scripts/seed/` — Node.js CLI + README that submits 3 diverse `request_verification` cases from a throwaway wallet, so the Explorer entry has visible on-chain history. Uses `dotenv` + `viem`; runs against studionet by default and accepts env overrides.
+- **docs:** `deliverables/` bundle — the entire Explorer submission ready to hand to a reviewer without further editing:
+  - `SUBMISSION.md` (full submission text + rationale)
+  - `text/oneliner.txt` (132 / 180)
+  - `text/description.txt` (988 / 1000)
+  - `text/expected.txt` (455 / 500)
+  - `logo/logo-1024.png` + `logo-512.png` + `logo.svg`
+
+### No contract changes.
+### Tests: fast tier still 63/63.
+
 ## [0.6.0] — 2026-08-25
 
 ### Added — richer public-facing content
