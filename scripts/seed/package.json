@@ -1,0 +1,13 @@
+{
+  "name": "stillhere-seed",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "seed": "node seed.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^17.0.0",
+    "viem": "^2.7.15"
+  }
+}
