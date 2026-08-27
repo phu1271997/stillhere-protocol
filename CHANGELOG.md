@@ -2,6 +2,15 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.6.0] — 2026-08-25
+
+### Added — richer public-facing content
+- **Rewritten `Home` page** — expanded from 3 minimal cards to a full landing: hero + 3 stats, "the problem" (centralized AI won't touch it / platforms silently ban / law enforcement acts too late), "how StillHere fixes it" (4 property rows), 5-step "Submit a case" walkthrough with linked CTA to `/request`, verdict-vocabulary grid (4 labels with E4 rule callout), "who this is built for" (3 concrete audiences), 6-item FAQ (`<details>` accordion), and a bottom CTA with Start / Registry / GitHub buttons. All content geared at first-time visitors — no assumed blockchain background.
+- **Rewritten `HowItWorks` page** — protocol reference: two-contract architecture diagram, the four design pillars, 5-step consensus mechanics (canary defense, semantic agreement rule with the exact ±10 confidence + CRITICAL/WARNING category-set match, E4 normalization), full red-flag taxonomy (all 8 categories with plain-English descriptions), three end-to-end flow cards (Request→Verdict, Dispute→Round 2, Contribution→Bounty with pull-payment safety note), ASCII state-machine diagram, economics section (base_fee / dispute_fee / contributor_share_bps), E1–E8 privacy safeguards in plain English, wallet + funding prerequisites, honest disclosure of the studionet view-route limitation, and a live-Explorer CTA row.
+
+### No contract changes.
+### No test changes — 63/63 still passing.
+
 ## [0.5.0] — 2026-08-25
 
 ### Added — Explorer submission prep
