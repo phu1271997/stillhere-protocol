@@ -44,6 +44,17 @@ def _reset_contracts():
     yield
 
 
+def pytest_collection_modifyitems(config, items):
+    """Auto-mark every test as ``fast`` unless it explicitly carries ``slow`` /
+    ``studionet`` / ``localnet``. Lets ``-m fast`` and ``-m slow`` select
+    tiers without a per-test decorator dance."""
+    tier_markers = {"slow", "studionet", "localnet"}
+    for item in items:
+        own = {m.name for m in item.iter_markers()}
+        if not own & tier_markers:
+            item.add_marker(pytest.mark.fast)
+
+
 def _install_genlayer_stub() -> None:
     if "genlayer" in sys.modules and getattr(sys.modules["genlayer"], "_stillhere_stub", False):
         return
