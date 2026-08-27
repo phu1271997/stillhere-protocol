@@ -35,7 +35,7 @@ export const App: React.FC = () => {
           <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
             <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
               <Link to="/" className="flex items-center gap-2.5 font-bold text-xl text-white tracking-tight">
-                <img src="/logo.svg" alt="StillHere logo" className="w-9 h-9 rounded-xl shadow-lg shadow-brand-600/25" />
+                <img src="/logo-512.png" alt="StillHere logo" className="w-9 h-9 rounded-xl shadow-lg shadow-brand-600/25" />
                 <span>Still<span className="text-brand-500">Here</span></span>
               </Link>
 
@@ -79,7 +79,7 @@ export const App: React.FC = () => {
               {/* Col 1 — brand */}
               <div className="col-span-2 md:col-span-1 flex flex-col gap-3">
                 <div className="flex items-center gap-2.5">
-                  <img src="/logo.svg" alt="StillHere" className="w-9 h-9 rounded-xl" />
+                  <img src="/logo-512.png" alt="StillHere" className="w-9 h-9 rounded-xl" />
                   <span className="font-bold text-lg text-white">Still<span className="text-brand-500">Here</span></span>
                 </div>
                 <p className="text-xs text-slate-400 leading-relaxed">
