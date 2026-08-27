@@ -1,0 +1,5 @@
+StillHere is a romance-scam prevention protocol. A family member submits a suspect profile (public URL plus a paraphrased chat sample); the case triggers an AI jury inside the contract that fetches the profile page live and returns one of four advisory verdicts: LIKELY_REAL, INCONCLUSIVE, SUSPICIOUS, or LIKELY_SCAM_RING. The subject can file a Round 2 dispute that re-runs the jury with counter-evidence, and third parties can contribute corroborating URLs weighed on re-adjudication.
+
+Built for adult children helping isolated parents, romance-scam recovery groups, and moderators who need a neutral second opinion before flagging a profile.
+
+Why GenLayer: a single centralized AI cannot legally emit "LIKELY_SCAM_RING" verdicts on real people (defamation liability). GenLayer distributes the judgment across independent validator LLMs that must agree on verdict, confidence tolerance, and critical red-flag categories. No PII or chat content is stored on-chain, only keccak256 hashes.
