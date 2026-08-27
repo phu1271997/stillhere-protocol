@@ -1,49 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0F1F14"/>
-      <stop offset="1" stop-color="#050A07"/>
+      <stop offset="0" stop-color="#0B1A33"/>
+      <stop offset="1" stop-color="#050A17"/>
     </linearGradient>
-    <linearGradient id="mark" x1="0.15" y1="0.05" x2="0.85" y2="0.95">
-      <stop offset="0" stop-color="#86EFAC"/>
-      <stop offset="0.55" stop-color="#22C55E"/>
-      <stop offset="1" stop-color="#15803D"/>
+    <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.32" r="0.62">
-      <stop offset="0" stop-color="#22C55E" stop-opacity="0.36"/>
-      <stop offset="1" stop-color="#22C55E" stop-opacity="0"/>
+    <linearGradient id="light" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7DD3FC"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.35" r="0.6">
+      <stop offset="0" stop-color="#3B82F6" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#3B82F6" stop-opacity="0"/>
     </radialGradient>
-    <clipPath id="shieldClip">
-      <path d="M256 84 L392 136 V262 C392 340 335 398 256 428 C177 398 120 340 120 262 V136 Z"/>
-    </clipPath>
   </defs>
 
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
   <rect width="512" height="512" rx="112" fill="url(#glow)"/>
 
-  <g clip-path="url(#shieldClip)">
-    <path d="M256 336
-             C214 296 172 268 172 226
-             C172 200 194 180 220 180
-             C238 180 250 190 256 200
-             C262 190 274 180 292 180
-             C318 180 340 200 340 226
-             C340 268 298 296 256 336 Z"
-          fill="url(#mark)" opacity="0.96"/>
-    <path d="M256 336
-             C214 296 172 268 172 226
-             C172 200 194 180 220 180
-             C238 180 250 190 256 200
-             C262 190 274 180 292 180
-             C318 180 340 200 340 226
-             C340 268 298 296 256 336 Z"
-          fill="none" stroke="#DCFCE7" stroke-width="4" stroke-linejoin="round" opacity="0.4"/>
-    <path d="M170 366 L342 366"
-          stroke="url(#mark)" stroke-width="12" stroke-linecap="round" opacity="0.75"/>
-    <path d="M186 386 L326 386"
-          stroke="url(#mark)" stroke-width="8" stroke-linecap="round" opacity="0.5"/>
-  </g>
+  <!-- Hex-shutter: 6 kite blades converging on a central gap.
+       Outer hex vertices at (256,90) (390,168) (390,344) (256,422) (122,344) (122,168).
+       Inner hex vertices at (256,182) (322,220) (322,292) (256,330) (190,292) (190,220). -->
 
-  <path d="M256 84 L392 136 V262 C392 340 335 398 256 428 C177 398 120 340 120 262 V136 Z"
-        fill="none" stroke="url(#mark)" stroke-width="26" stroke-linejoin="round"/>
+  <!-- Blade 1: top-left (dark) -->
+  <path d="M 256 90 L 390 168 L 322 220 L 256 182 Z" fill="url(#dark)"/>
+  <!-- Blade 2: top-right (light) -->
+  <path d="M 390 168 L 390 344 L 322 292 L 322 220 Z" fill="url(#light)"/>
+  <!-- Blade 3: bottom-right (dark) -->
+  <path d="M 390 344 L 256 422 L 256 330 L 322 292 Z" fill="url(#dark)"/>
+  <!-- Blade 4: bottom (light) -->
+  <path d="M 256 422 L 122 344 L 190 292 L 256 330 Z" fill="url(#light)"/>
+  <!-- Blade 5: bottom-left (dark) -->
+  <path d="M 122 344 L 122 168 L 190 220 L 190 292 Z" fill="url(#dark)"/>
+  <!-- Blade 6: top (light) -->
+  <path d="M 122 168 L 256 90 L 256 182 L 190 220 Z" fill="url(#light)"/>
+
+  <!-- Outer hex outline for crispness at small sizes -->
+  <path d="M 256 90 L 390 168 L 390 344 L 256 422 L 122 344 L 122 168 Z"
+        fill="none" stroke="#DBEAFE" stroke-width="4" stroke-linejoin="round" opacity="0.35"/>
 </svg>
