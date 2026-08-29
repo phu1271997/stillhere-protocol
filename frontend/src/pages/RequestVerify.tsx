@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Plus, Trash2, Send } from 'lucide-react';
 import { PrivacyNotice } from '../components/PrivacyNotice';
+import { PromptPreview } from '../components/PromptPreview';
 import { computeProfileHash, computeChatHash, computeIdentityHash } from '../lib/hash';
 import { CORE_ADDRESS, sendGenLayerTransaction, waitForFinalizedTx } from '../lib/client';
 import { saveCase } from '../lib/caseStore';
@@ -218,6 +219,16 @@ export const RequestVerify: React.FC = () => {
               className="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 focus:outline-none focus:border-brand-500 font-sans"
             />
           </div>
+
+          <PromptPreview
+            publicUrls={publicUrls.length > 0 ? publicUrls : (publicUrlInput.trim() ? [publicUrlInput.trim()] : [])}
+            imageUrls={imageUrls.length > 0 ? imageUrls : (imageUrlInput.trim() ? [imageUrlInput.trim()] : [])}
+            chatSample={chatSample}
+            claimedName={claimedName}
+            claimedJob={claimedJob}
+            claimedCompany={claimedCompany}
+            claimedCountry={claimedCountry}
+          />
 
           <button
             type="submit"
