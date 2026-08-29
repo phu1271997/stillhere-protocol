@@ -30,26 +30,32 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <div className="min-h-screen flex flex-col justify-between">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-brand-600 focus:text-white focus:font-semibold"
+        >
+          Skip to main content
+        </a>
         <div>
           <DisclaimerBanner />
-          <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+          <header role="banner" className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
             <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
               <Link to="/" className="flex items-center gap-2.5 font-bold text-xl text-white tracking-tight">
                 <img src="/logo-512.png" alt="StillHere logo" className="w-9 h-9 rounded-xl shadow-lg shadow-brand-600/25" />
                 <span>Still<span className="text-brand-500">Here</span></span>
               </Link>
 
-              <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-                <Link to="/request" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
+              <nav aria-label="Primary" className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+                <Link to="/request" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
                   <HeartHandshake className="w-4 h-4" /> Request Verify
                 </Link>
-                <Link to="/cases" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
+                <Link to="/cases" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
                   <FolderOpen className="w-4 h-4" /> My Cases
                 </Link>
-                <Link to="/registry" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
+                <Link to="/registry" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
                   <Database className="w-4 h-4" /> Registry
                 </Link>
-                <Link to="/how-it-works" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
+                <Link to="/how-it-works" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
                   <HelpCircle className="w-4 h-4" /> How It Works
                 </Link>
               </nav>
@@ -58,7 +64,7 @@ export const App: React.FC = () => {
             </div>
           </header>
 
-          <main className="max-w-6xl mx-auto px-4 py-6">
+          <main id="main" tabIndex={-1} className="max-w-6xl mx-auto px-4 py-6 focus:outline-none">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/request" element={<RequestVerify />} />
@@ -73,7 +79,7 @@ export const App: React.FC = () => {
           </main>
         </div>
 
-        <footer className="border-t border-slate-800/60 bg-slate-950 mt-12">
+        <footer role="contentinfo" className="border-t border-slate-800/60 bg-slate-950 mt-12">
           <div className="max-w-6xl mx-auto px-4 py-12">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
               {/* Col 1 — brand */}
