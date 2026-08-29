@@ -1,0 +1,14 @@
+Phase 1 upgrades DX and user-facing transparency. No contract changes (addresses unchanged from v0.6.0).
+
+Before: request form had no jury-prompt visibility. /cases was a chronological dump. ErrorBoundary printed a raw stack. Nav lacked skip link and focus rings.
+
+After — 7 concrete changes:
+1. PromptPreview on /request renders the exact jury prompt with user fields interpolated and the round-tagged canary highlighted.
+2. /cases gains search + dispute filter + sort with "showing X of Y".
+3. Skip-to-main link, landmarks, aria-labels, focus-visible rings across nav and controls.
+4. ErrorBoundary classifies every error against a catalog (MetaMask, wrong chain, insufficient funds, view exit_code 1, timeout, JSON parse) with specific fix + deep-link CTA.
+5. Four ADRs (nondet API, hash-only privacy, E4, MAX_DISPUTES=1).
+6. docs/API.md + docs/DIAGRAMS.md (Mermaid) + docs/RUNBOOK.md.
+7. docs/samples/ with 3 case payload fixtures.
+
+Fast tests 63/63 pass. Live: stillhere-protocol.vercel.app.
