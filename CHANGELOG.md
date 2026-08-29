@@ -2,6 +2,28 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.8.0] — 2026-08-29 — Milestone Phase 1: DX & Documentation Overhaul v2
+
+### Added — frontend features (Loại 7)
+- **feat(prompt-preview):** `PromptPreview` component on `/request` renders the exact system prompt the AI Jury will see, with the user's URL/name/chat fields interpolated and the round-tagged canary (`SH-R-{case_id:08d}-CANARY`) highlighted. First transparency surface between requester intent and jury input.
+- **feat(cases):** `/cases` gains a live search + dispute-status filter + sort-by-date-or-id toggle, plus a "showing X of Y" summary line and a "clear filters" affordance. Empty state and no-match state are distinct.
+- **ui(a11y):** skip-to-main link (`focus:not-sr-only`), `role="banner"/main/contentinfo` landmarks, `aria-label="Primary"` on the top nav, `id="main" tabIndex={-1}` target, and `focus-visible:ring-2 ring-brand-400` on every button, link, input, and select in the flow.
+- **ui(error-boundary):** `ErrorBoundary` now classifies the caught error against a catalog (MetaMask missing, wrong chain, insufficient funds, studionet view failure, RPC timeout, JSON parse). Renders a specific headline + fix + optional deep-link (Install MetaMask / Open Studio Accounts / Open Explorer), with the raw stack collapsed behind `<details>` for bug reports.
+
+### Added — documentation (Loại 8)
+- **docs(adr):** `docs/adr/` — 4 Architecture Decision Records (Context / Decision / Alternatives / Consequences):
+  - `0001` — Why `gl.vm.run_nondet` with a hand-written semantic validator, not `eq_principle.strict_eq` or `run_nondet_unsafe`.
+  - `0002` — Hash-only privacy: keccak256 client-side, no plaintext PII / chat on-chain.
+  - `0003` — E4: auto-downgrade `LIKELY_SCAM_RING` when confidence < 85 or CRITICAL flags < 2.
+  - `0004` — `MAX_DISPUTES = 1`, and why unbounded appeals were rejected.
+- **docs(api):** `docs/API.md` — method-by-method reference for `StillHereCore` (11 methods) and `ScammerRegistry` (5 methods) with signatures, guards, state transitions, and the studionet view-execution note.
+- **docs(diagrams):** `docs/DIAGRAMS.md` — Mermaid sequence diagrams for the three flows (Request → Verdict, Dispute → Round 2, Contribution → Bounty pull-payment) and the case state machine.
+- **docs(runbook):** `docs/RUNBOOK.md` — deploy checklist with the exact files that must be bumped when addresses change, post-deploy smoke test, incident triage for the four common studionet symptoms, emergency-ops notes.
+- **docs(samples):** `docs/samples/` — 3 sample case JSON payloads (LIKELY_REAL / INCONCLUSIVE / SUSPICIOUS) usable as demo fixtures or seed-script templates.
+
+### No contract changes
+### Fast tier: 63/63 tests passing
+
 ## [0.7.0] — 2026-08-27
 
 ### Added
