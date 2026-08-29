@@ -1,0 +1,19 @@
+{
+  "label": "Case A — reference profile with a stable digital footprint",
+  "expected_verdict_range": ["LIKELY_REAL", "INCONCLUSIVE"],
+  "request_verification_args": {
+    "public_urls": [
+      "https://en.wikipedia.org/wiki/Wikipedia:About"
+    ],
+    "image_urls": [],
+    "claimed_identity": {
+      "name": "Reference Subject A",
+      "job": "researcher",
+      "company": "public",
+      "country": "US"
+    },
+    "chat_sample": "Discussed the weather. No requests. Long-standing profile.",
+    "bounty_topup_wei": 0
+  },
+  "notes": "Wikipedia:About is an extremely stable public page with a coherent, verifiable identity. The AI jury should find no critical red flags and lean toward LIKELY_REAL (or INCONCLUSIVE if it decides the evidence, while consistent, does not affirmatively verify identity)."
+}

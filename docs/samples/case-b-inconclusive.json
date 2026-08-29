@@ -1,0 +1,19 @@
+{
+  "label": "Case B — thin evidence about a public romance-scam consumer resource",
+  "expected_verdict_range": ["INCONCLUSIVE"],
+  "request_verification_args": {
+    "public_urls": [
+      "https://www.consumer.ftc.gov/articles/what-you-need-know-about-romance-scams"
+    ],
+    "image_urls": [],
+    "claimed_identity": {
+      "name": "Reference Subject B",
+      "job": "engineer",
+      "company": "offshore",
+      "country": "UK"
+    },
+    "chat_sample": "Recent account. Limited public activity. No specific claims yet.",
+    "bounty_topup_wei": 0
+  },
+  "notes": "The URL is a legitimate consumer-protection article — not itself a scam profile. The jury has very little to go on beyond the claimed identity fields. Correct behaviour: INCONCLUSIVE, because thin evidence should not be promoted to a strong label."
+}

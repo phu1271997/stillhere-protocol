@@ -1,0 +1,26 @@
+{
+  "label": "Case C — chat sample matches published scam-script patterns",
+  "expected_verdict_range": ["SUSPICIOUS"],
+  "e4_note": "The jury may raw-emit LIKELY_SCAM_RING; contract-side _normalize_verdict downgrades to SUSPICIOUS unless confidence >= 85 AND CRITICAL flag count >= 2. See ADR 0003.",
+  "request_verification_args": {
+    "public_urls": [
+      "https://en.wikipedia.org/wiki/Romance_scam"
+    ],
+    "image_urls": [],
+    "claimed_identity": {
+      "name": "Reference Subject C",
+      "job": "deployed_soldier",
+      "company": "unverifiable",
+      "country": "Yemen"
+    },
+    "chat_sample": "Fell in love immediately. Need urgent help with wire transfer to unlock inheritance. Cannot video call due to operations. Please trust me and send crypto.",
+    "bounty_topup_wei": 0
+  },
+  "expected_red_flags_hint": [
+    { "category": "SCRIPT_LANGUAGE", "severity": "CRITICAL" },
+    { "category": "MONEY_REQUEST_EARLY", "severity": "CRITICAL" },
+    { "category": "UNVERIFIABLE_JOB", "severity": "WARNING" },
+    { "category": "URGENT_EMOTIONAL", "severity": "WARNING" }
+  ],
+  "notes": "Chat sample is a compressed version of textbook romance-scam script beats. Whether the jury lands on SUSPICIOUS or LIKELY_SCAM_RING depends on how confidently the LLM identifies the pattern. E4 is the safety net."
+}
