@@ -2,6 +2,27 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.9.0] — 2026-08-30 — Milestone Phase 2: Property-based Hardening + Onboarding Tour + SECURITY v3
+
+### Added — formal verification (Loại 5d)
+- **test(properties):** `tests/test_properties.py` — 16 `hypothesis`-driven properties covering:
+  - `_canon_hash` idempotency + case-insensitivity over the hex-alphabet domain used by on-chain profile hashes.
+  - `_normalize_verdict` E4 rule swept across the entire `(label × confidence × critical_count × threshold_conf × threshold_flags)` space — the LIKELY_SCAM_RING gate is bidirectional (accept iff both thresholds met, downgrade otherwise) and E4 never touches non-scam labels.
+  - `_canary_token` injectivity per `(case_id, round)`, 8-digit zero padding, disjoint `R` / `D` round tags.
+  - `_strip_canary` completeness — every canary substring removed regardless of position or repetition.
+  - `_extract_json` never crashes on arbitrary input; only returns `dict` or `None`.
+  - Validator-agreement semantics: consensus binds on `label` + `|Δconfidence| ≤ 10` + CRITICAL/WARNING category *sets*, NOT on free-text `reason` / `evidence`.
+- **Total suite: 80 tests** (63 example-based + 16 property + 1 gltest slow-tier smoke).
+
+### Added — onboarding UX (Loại 7f)
+- **feat(onboarding):** `OnboardingTour` — 4-step first-visit modal overlay (welcome → hash-before-signing → prompt preview → post-sign flow). Persists dismissal in `localStorage` under `stillhere:onboarding:v1`. Once dismissed, a floating "Replay tour" pill in the bottom-right lets any visitor reopen it. Full keyboard nav + focus ring + `role="dialog" aria-modal="true"`.
+
+### Added — threat-model doc (Loại 8)
+- **docs(security):** `SECURITY.md v3` addendum on top of the v2 baseline. New disclosure surface (`ErrorBoundary` classification, `PromptPreview` transparency, studionet view intermittency, missing pause switch), new self-check items, and an expanded formal-verification section pointing at the new property tests.
+
+### No contract changes
+### 80/80 tests passing (fast tier includes property tests)
+
 ## [0.8.0] — 2026-08-29 — Milestone Phase 1: DX & Documentation Overhaul v2
 
 ### Added — frontend features (Loại 7)
