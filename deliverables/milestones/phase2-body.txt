@@ -1,0 +1,10 @@
+Phase 2 adds formal verification, first-visit onboarding, and a v3 threat-model addendum. No contract changes.
+
+Before: 63 example tests. First visitors landed with no walkthrough. SECURITY.md v2 didn't cover new disclosure surfaces.
+
+After — 3 changes:
+1. tests/test_properties.py: 16 hypothesis properties sweep E4 across the full label/confidence/critical_count/thresholds space, prove _canary_token injectivity + disjoint R/D tags, guarantee _extract_json never crashes, and bind validator agreement to label + |delta_conf|<=10 + CRITICAL/WARNING category sets.
+2. OnboardingTour: 4-step modal on first visit. Dismissal persisted in localStorage; replay pill bottom-right; role=dialog aria-modal.
+3. SECURITY.md v3 addendum on v2: enumerates the properties, formalizes new disclosure surfaces (ErrorBoundary catalog + PromptPreview), acknowledges studionet view intermittency and missing pause switch.
+
+80/80 tests pass. Live: stillhere-protocol.vercel.app.
