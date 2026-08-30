@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { ConnectWallet } from './components/ConnectWallet';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
+import { OnboardingTour } from './components/OnboardingTour';
 import { CORE_ADDRESS, REGISTRY_ADDRESS, explorerAddressUrl } from './lib/client';
 
 import { Home } from './pages/Home';
@@ -29,6 +30,7 @@ import { Contribute } from './pages/Contribute';
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
+      <OnboardingTour />
       <div className="min-h-screen flex flex-col justify-between">
         <a
           href="#main"
