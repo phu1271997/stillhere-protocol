@@ -1,4 +1,81 @@
-# StillHere Security Threat Model (v2 — 2026-08-06)
+# StillHere Security Threat Model (v3 — 2026-08-29)
+
+> **v3 addendum** (this section) sits on top of the v2 baseline below.
+> The v2 threat table is intact and still authoritative for T1–T9. v3
+> only introduces new mitigation surfaces and new self-check items —
+> nothing in v2 has been retracted.
+
+## v3 additions (Milestone Phase 2)
+
+### Formal-verification surface expanded (§4 self-check)
+
+- [x] **Property-based coverage** — `tests/test_properties.py` adds 16
+  `hypothesis`-driven properties covering:
+  - `_canon_hash` idempotency + case-insensitivity over the full hex
+    alphabet (the actual domain of on-chain profile hashes).
+  - `_normalize_verdict` E4 rule swept across the entire
+    `(label × confidence × critical_count × thresholds)` space —
+    guarantees the LIKELY_SCAM_RING gate is bidirectional (pass iff
+    both thresholds met, downgrade otherwise) and that E4 never
+    touches non-scam labels.
+  - `_canary_token` injectivity per `(case_id, round)`, 8-digit zero
+    padding, and disjoint round tags (R vs D) so a validator can
+    never mistake which round a payload belongs to.
+  - `_strip_canary` completeness — every canary substring must be
+    removed regardless of position or repetition.
+  - `_extract_json` never crashes on arbitrary input; only returns
+    `dict` or `None`.
+  - Validator-agreement semantics: consensus binds on
+    `label` + `|Δconfidence| ≤ 10` + CRITICAL/WARNING category
+    *sets*, and NOT on free-text `reason` / `evidence`.
+
+  Total suite: **80 tests** (63 example-based + 16 property + 1
+  gltest slow-tier smoke that skips gracefully).
+
+### New disclosure surface
+
+- **UI-level error classification** — the frontend `ErrorBoundary` no
+  longer surfaces raw stack traces at the top level. Errors are
+  matched against a catalog (MetaMask missing, wrong chain,
+  insufficient funds, studionet view failure, tx timeout, JSON
+  parse) and each classification carries a specific fix and deep
+  link. The raw stack is preserved behind `<details>` for bug
+  reports. Guards against leaking internal RPC error paths as UX.
+
+- **Prompt-surface transparency** — the `PromptPreview` component on
+  `/request` renders the exact system prompt with user fields
+  interpolated *before* the user signs. Complements T2 (prompt
+  injection) by giving the requester the same view the LLM will
+  receive, so a tamper attempt shows visibly in the preview.
+
+### Known-limitations acknowledged in-app
+
+- **Studionet view route intermittency** — Studio's `eth_call` for
+  view methods currently returns `execution failed / exit_code 1`
+  for these contracts. Writes are unaffected; verdicts land on-chain
+  and are readable from GenLayer Explorer. The frontend surfaces
+  this state explicitly on Registry and VerdictDetail with an
+  Inspect-on-Explorer link, and the ErrorBoundary classification
+  covers it directly. Documented in `docs/RUNBOOK.md § 3.1` and
+  `docs/API.md` § Known runtime limitation.
+
+- **No emergency pause switch in v0.7.x** — flagged in
+  `docs/RUNBOOK.md § 4`. Planned as a Phase 3 contract-side
+  milestone (requires redeploy).
+
+### v3 self-check additions
+
+- [x] Property-based tests execute in the `fast` tier (< 1 s wall
+  clock).
+- [x] Every catalog entry in `ErrorBoundary.classify` maps to a
+  concrete error string emitted somewhere in the app's write or
+  read path.
+- [x] `PromptPreview` output is a pure function of user inputs —
+  no network call, no wallet access, no side effect.
+
+---
+
+# v2 baseline (2026-08-06)
 
 Full threat model for the StillHere protocol. Complements the general privacy/ethics
 notes in [`docs/ETHICS.md`](docs/ETHICS.md).
