@@ -14,6 +14,7 @@ import {
   StudionetTx,
 } from '../lib/client';
 import { loadCase, StoredCaseMeta } from '../lib/caseStore';
+import { AnnotationBox } from '../components/AnnotationBox';
 
 interface OnChainCase {
   state: string;
@@ -220,6 +221,8 @@ export const VerdictDetail: React.FC = () => {
       </div>
 
       {state === 'FAILED' && <FailedRefundBox caseId={caseId} requester={requester} />}
+
+      <AnnotationBox caseId={caseId} />
 
       <div className="glass-panel p-6 flex flex-col gap-4">
         <div>

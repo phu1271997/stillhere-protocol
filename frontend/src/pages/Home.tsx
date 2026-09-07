@@ -21,25 +21,25 @@ import {
   Bot,
   ChevronRight,
 } from 'lucide-react';
+import { useI18n } from '../lib/i18n';
 
 export const Home: React.FC = () => {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col gap-24 py-8">
       {/* ================= HERO ================= */}
       <section className="flex flex-col items-center text-center gap-6 max-w-4xl mx-auto pt-8">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 text-xs font-semibold uppercase tracking-wider">
-          <ShieldCheck className="w-4 h-4" /> Powered by GenLayer Consensus
+          <ShieldCheck className="w-4 h-4" /> {t('home.badge')}
         </div>
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">
-          Protect Loved Ones from <br />
+          {t('home.hero.h1a')} <br />
           <span className="bg-gradient-to-r from-brand-400 via-emerald-400 to-teal-300 bg-clip-text text-transparent">
-            Romance Scams On-Chain
+            {t('home.hero.h1b')}
           </span>
         </h1>
         <p className="text-lg text-slate-300 max-w-2xl leading-relaxed">
-          StillHere lets families submit a suspect profile URL and chat pattern to a decentralized AI Jury on GenLayer.
-          Independent validator LLMs read the profile live, weigh the evidence, and reach consensus on an advisory
-          verdict — no single company issues the judgment, no plaintext is stored on-chain.
+          {t('home.hero.lead')}
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
@@ -47,7 +47,7 @@ export const Home: React.FC = () => {
             to="/request"
             className="px-6 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-base shadow-xl shadow-brand-600/25 flex items-center gap-2 transition-all active:scale-95"
           >
-            <span>Request AI Verification</span>
+            <span>{t('home.cta.request')}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
@@ -55,7 +55,7 @@ export const Home: React.FC = () => {
             className="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-semibold text-base flex items-center gap-2 transition-all"
           >
             <Cpu className="w-4 h-4 text-brand-400" />
-            <span>How the Protocol Works</span>
+            <span>{t('home.cta.how')}</span>
           </Link>
         </div>
 

@@ -197,3 +197,4 @@ export function explorerAddressUrl(addr: string): string {
 
 export const CORE_ADDRESS = ((import.meta as any).env?.VITE_CORE_ADDRESS || '0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5') as `0x${string}`;
 export const REGISTRY_ADDRESS = ((import.meta as any).env?.VITE_REGISTRY_ADDRESS || '0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df') as `0x${string}`;
+export const ANNOTATIONS_ADDRESS = ((import.meta as any).env?.VITE_ANNOTATIONS_ADDRESS || '') as `0x${string}` | '';

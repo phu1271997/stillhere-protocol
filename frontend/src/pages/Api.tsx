@@ -78,6 +78,47 @@ const ENDPOINTS: Endpoint[] = [
 }`,
     cache: '60 s edge cache',
   },
+  {
+    method: 'GET',
+    path: '/api/feed.xml',
+    purpose: 'Atom 1.0 feed of the last 50 case verdicts. Subscribable in Feedly / Inoreader / iOS Reader / NetNewsWire.',
+    example: 'curl -sS https://stillhere-protocol.vercel.app/api/feed.xml',
+    responseSketch: `<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>StillHere — On-chain Romance Scam Verdicts</title>
+  <entry>
+    <title>Case #7 — SUSPICIOUS (78%)</title>
+    <link href="…/verdict/7"/>
+    <updated>2026-09-06T…</updated>
+    <category term="SUSPICIOUS"/>
+  </entry>
+</feed>`,
+    cache: '60 s edge cache · 300 s SWR',
+  },
+  {
+    method: 'GET',
+    path: '/api/feed.json',
+    purpose: 'JSON Feed 1.1 companion to /api/feed.xml — same reads, JSON shape.',
+    example: 'curl -sS https://stillhere-protocol.vercel.app/api/feed.json',
+    responseSketch: `{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "StillHere — On-chain Romance Scam Verdicts",
+  "items": [
+    { "id": "urn:stillhere:case:7", "title": "Case #7 — SUSPICIOUS (78%)",
+      "url": "…/verdict/7", "tags": ["SUSPICIOUS"] }
+  ]
+}`,
+    cache: '60 s edge cache',
+  },
+  {
+    method: 'GET',
+    path: '/api/og/case/:id.svg',
+    purpose: 'Server-rendered SVG unfurl card for a case verdict. 1200×630, deterministic per case_id. Suitable as the target of <meta property="og:image">.',
+    params: [{ name: ':id', type: 'int', note: 'Path segment. Integer case id.' }],
+    example: 'curl -sS https://stillhere-protocol.vercel.app/api/og/case/7.svg',
+    responseSketch: '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">…</svg>',
+    cache: '300 s edge cache · 1800 s SWR',
+  },
 ];
 
 export const Api: React.FC = () => {

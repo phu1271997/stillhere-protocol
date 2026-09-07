@@ -14,11 +14,13 @@ import {
   BarChart3,
   Lock,
   Terminal,
+  Search,
 } from 'lucide-react';
 import { ConnectWallet } from './components/ConnectWallet';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
 import { OnboardingTour } from './components/OnboardingTour';
 import { CORE_ADDRESS, REGISTRY_ADDRESS, explorerAddressUrl } from './lib/client';
+import { LanguageToggle, useI18n } from './lib/i18n';
 
 import { Home } from './pages/Home';
 import { RequestVerify } from './pages/RequestVerify';
@@ -33,6 +35,55 @@ import { Stats } from './pages/Stats';
 import { Trust } from './pages/Trust';
 import { Vault } from './pages/Vault';
 import { Api } from './pages/Api';
+import { Explorer } from './pages/Explorer';
+
+const NAV_LINK_CLASS = 'hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded';
+
+const Header: React.FC = () => {
+  const { t } = useI18n();
+  return (
+    <header role="banner" className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
+        <Link to="/" className="flex items-center gap-2.5 font-bold text-xl text-white tracking-tight">
+          <img src="/logo-512.png" alt="StillHere logo" className="w-9 h-9 rounded-xl shadow-lg shadow-brand-600/25" />
+          <span>Still<span className="text-brand-500">Here</span></span>
+        </Link>
+
+        <nav aria-label="Primary" className="hidden lg:flex items-center gap-5 text-sm font-medium text-slate-300">
+          <Link to="/request" className={NAV_LINK_CLASS}>
+            <HeartHandshake className="w-4 h-4" /> {t('nav.request')}
+          </Link>
+          <Link to="/explorer" className={NAV_LINK_CLASS}>
+            <Search className="w-4 h-4" /> {t('nav.explorer')}
+          </Link>
+          <Link to="/cases" className={NAV_LINK_CLASS}>
+            <FolderOpen className="w-4 h-4" /> {t('nav.cases')}
+          </Link>
+          <Link to="/registry" className={NAV_LINK_CLASS}>
+            <Database className="w-4 h-4" /> {t('nav.registry')}
+          </Link>
+          <Link to="/stats" className={NAV_LINK_CLASS}>
+            <BarChart3 className="w-4 h-4" /> {t('nav.stats')}
+          </Link>
+          <Link to="/vault" className={NAV_LINK_CLASS}>
+            <Lock className="w-4 h-4" /> {t('nav.vault')}
+          </Link>
+          <Link to="/api" className={NAV_LINK_CLASS}>
+            <Terminal className="w-4 h-4" /> {t('nav.api')}
+          </Link>
+          <Link to="/how-it-works" className={NAV_LINK_CLASS}>
+            <HelpCircle className="w-4 h-4" /> {t('nav.how')}
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <ConnectWallet />
+        </div>
+      </div>
+    </header>
+  );
+};
 
 export const App: React.FC = () => {
   return (
@@ -47,40 +98,7 @@ export const App: React.FC = () => {
         </a>
         <div>
           <DisclaimerBanner />
-          <header role="banner" className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
-            <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-              <Link to="/" className="flex items-center gap-2.5 font-bold text-xl text-white tracking-tight">
-                <img src="/logo-512.png" alt="StillHere logo" className="w-9 h-9 rounded-xl shadow-lg shadow-brand-600/25" />
-                <span>Still<span className="text-brand-500">Here</span></span>
-              </Link>
-
-              <nav aria-label="Primary" className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-                <Link to="/request" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                  <HeartHandshake className="w-4 h-4" /> Request Verify
-                </Link>
-                <Link to="/cases" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                  <FolderOpen className="w-4 h-4" /> My Cases
-                </Link>
-                <Link to="/registry" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                  <Database className="w-4 h-4" /> Registry
-                </Link>
-                <Link to="/stats" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                  <BarChart3 className="w-4 h-4" /> Stats
-                </Link>
-                <Link to="/vault" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                  <Lock className="w-4 h-4" /> Vault
-                </Link>
-                <Link to="/api" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                  <Terminal className="w-4 h-4" /> API
-                </Link>
-                <Link to="/how-it-works" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                  <HelpCircle className="w-4 h-4" /> How It Works
-                </Link>
-              </nav>
-
-              <ConnectWallet />
-            </div>
-          </header>
+          <Header />
 
           <main id="main" tabIndex={-1} className="max-w-6xl mx-auto px-4 py-6 focus:outline-none">
             <Routes>
@@ -97,6 +115,7 @@ export const App: React.FC = () => {
               <Route path="/trust/:addr" element={<Trust />} />
               <Route path="/vault" element={<Vault />} />
               <Route path="/api" element={<Api />} />
+              <Route path="/explorer" element={<Explorer />} />
             </Routes>
           </main>
         </div>
@@ -122,6 +141,7 @@ export const App: React.FC = () => {
               {/* Col 2 — Protocol */}
               <FooterCol title="Protocol">
                 <FooterLink to="/request" label="Request verify" />
+                <FooterLink to="/explorer" label="Case explorer" />
                 <FooterLink to="/cases" label="My cases" />
                 <FooterLink to="/registry" label="Profile registry" />
                 <FooterLink to="/stats" label="Protocol stats" />
