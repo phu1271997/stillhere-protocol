@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Wallet, CheckCircle2, AlertCircle, Award } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { connectWallet } from '../lib/wallet';
 
 interface ConnectWalletProps {
@@ -56,10 +57,20 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({ onAddressChange })
   return (
     <div className="flex flex-col items-end">
       {address ? (
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-emerald-500/30 text-emerald-400 font-mono text-sm shadow-inner">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          <span>{address.slice(0, 6)}...{address.slice(-4)}</span>
-          <span className="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">studionet</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-emerald-500/30 text-emerald-400 font-mono text-sm shadow-inner">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>{address.slice(0, 6)}...{address.slice(-4)}</span>
+            <span className="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">studionet</span>
+          </div>
+          <Link
+            to={`/trust/${address.toLowerCase()}`}
+            title="View my trust profile"
+            aria-label="View my trust profile"
+            className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-brand-300 hover:text-brand-200 hover:border-brand-500/40"
+          >
+            <Award className="w-4 h-4" />
+          </Link>
         </div>
       ) : (
         <button
