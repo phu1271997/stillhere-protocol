@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Plus, Trash2, Send } from 'lucide-react';
+import { ShieldCheck, Plus, Trash2, Send, Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { PrivacyNotice } from '../components/PrivacyNotice';
 import { PromptPreview } from '../components/PromptPreview';
 import { computeProfileHash, computeChatHash, computeIdentityHash } from '../lib/hash';
@@ -210,7 +211,15 @@ export const RequestVerify: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">Chat Pattern Sample (Paraphrased)</label>
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-300">Chat Pattern Sample (Paraphrased)</label>
+              <Link
+                to="/vault"
+                className="text-[11px] text-brand-400 hover:text-brand-300 inline-flex items-center gap-1"
+              >
+                <Lock className="w-3 h-3" /> Encrypt for a specific reviewer instead
+              </Link>
+            </div>
             <textarea
               rows={4}
               value={chatSample}
@@ -218,6 +227,11 @@ export const RequestVerify: React.FC = () => {
               placeholder="Paste anonymized chat patterns (e.g. rapid declarations of love, urgent financial requests...)"
               className="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 focus:outline-none focus:border-brand-500 font-sans"
             />
+            <p className="text-[11px] text-slate-500">
+              The text you type here is fed into the AI Jury prompt live and hashed on-chain — the plaintext is never
+              stored, only <code className="font-mono text-brand-300">keccak256</code>. If you'd rather keep the plaintext
+              off the jury entirely, encrypt it in the Vault and share the envelope out-of-band with your reviewer.
+            </p>
           </div>
 
           <PromptPreview
