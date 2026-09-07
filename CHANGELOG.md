@@ -2,6 +2,77 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.11.0] — 2026-09-06 — Milestone Phase 4: Client-side envelope encryption + Public JSON API + IPFS-style content addressing
+
+### Added — Client-side envelope encryption (Loại 3a)
+- **`frontend/src/lib/encryption.ts`** — full envelope layer built entirely on
+  WebCrypto (no runtime dependency). Uses ephemeral ECDH over P-256 for key
+  agreement, HKDF-SHA-256 with `stillhere-envelope-v1` info tag for key
+  derivation, and AES-256-GCM with a 12-byte random nonce for the payload.
+  Every envelope carries a per-envelope ephemeral public key + the ciphertext
+  + the recipient's public-key fingerprint (first 16 hex of SHA-256 over the
+  raw key) + the case's `profile_hash` as soft-binding metadata.
+- **`envelopeContentHash`** — canonical (`Object.keys().sort()`) SHA-256 over
+  the envelope JSON. Deterministic content-address for external pinning to
+  Web3.Storage / Pinata / IPFS. The `/vault` page displays the hash and offers
+  a one-click download of the envelope as a `.json` file named after the
+  recipient fingerprint + timestamp.
+- **`/vault` page** — 3-tab UI: "My keypair" (generate / rotate / delete on
+  device, private JWK never leaves `localStorage`), "Encrypt to reviewer"
+  (paste the reviewer's public JWK, encrypt a plaintext, download the
+  envelope), "Decrypt envelope" (paste or upload a JSON envelope, decrypt
+  with the stored or manually-supplied private JWK).
+- **`/request` — Vault handoff link** — an inline "Encrypt for a specific
+  reviewer instead" link jumps from the chat-sample field to the vault. The
+  on-chain hash-only path stays the default.
+
+### Added — Public JSON API on Vercel Edge (Loại 4)
+- **`api/_studionet.ts`** — shared studionet RPC helper for the edge runtime.
+  Wraps `eth_call` + hex → JSON decoding, adds CORS + 30 s
+  `stale-while-revalidate` cache headers, imports the same viem helpers the
+  frontend uses so encoding cannot drift.
+- **`api/stats.ts`** → `GET /api/stats` — aggregate protocol counters
+  (`total_cases`, `total_profiles`, per-label verdict histogram, `paused`,
+  `scam_share_percent`).
+- **`api/cases.ts`** → `GET /api/cases?offset=&limit=` — reverse-chron
+  paginated case-id list. Reads `list_recent_case_ids` + `get_total_cases`.
+- **`api/case.ts`** → `GET /api/case/:id` — full on-chain case + verdict for
+  a case id (wired via `vercel.json` rewrite from the pretty URL to the query
+  string).
+- **`api/registry.ts`** → `GET /api/registry/:hash` — profile status +
+  watcher count for a canonical profile hash.
+- **`api/trust.ts`** → `GET /api/trust/:addr` — trust tier + full
+  `RequesterStats` payload for a wallet address.
+- **`vercel.json`** — three rewrites map the pretty paths to the query-string
+  form, and the SPA catch-all now excludes `api/` so edge functions land at
+  the right route.
+
+### Added — AI Jury prompt (Loại 1b continuation)
+- The Phase-3 corroboration block is unchanged in wiring but the docs and ADR
+  now cover it end-to-end (`docs/adr/0006` + `docs/API.md` note pointing at
+  `/api/*`).
+
+### Added — `/api` docs page + navigation
+- **`/api` page** — renders the 5 endpoint cards with method / path / purpose
+  / parameters / curl example / response shape / cache TTL. Header + footer
+  gain new links to `/vault` and `/api`.
+
+### Added — tests
+- **`frontend/src/lib/encryption.test.mjs`** — 5 `node --test` cases:
+  successful encrypt → decrypt round-trip, decrypt with the wrong keypair
+  fails, envelope content hash is deterministic across canonical
+  serialisation, `parseEnvelopeJson` rejects malformed input, and accepts a
+  well-formed envelope. Runs under Node 20 WebCrypto, no runtime dep beyond
+  the checked-in `typescript`. Wired into `make test-frontend`.
+
+### Docs
+- **`docs/adr/0006-client-side-envelope-encryption.md`** — context, decision
+  (why P-256 over X25519 today, why WebCrypto over libsodium, why not upload
+  to StillHere infra), rejected alternatives.
+
+### No contract changes.
+### Fast tier: 98/98 Python tests + 5/5 node encryption tests.
+
 ## [0.10.0] — 2026-09-05 — Milestone Phase 3: Requester reputation + Analytics + Watcher subscriptions + Refund + Pause (contract redeploy)
 
 ### Contracts (redeploy required — new addresses tracked in `scripts/deploy.md`)

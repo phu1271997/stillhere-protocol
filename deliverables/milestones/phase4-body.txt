@@ -1,0 +1,12 @@
+Phase 4 adds a client-side encrypted vault, a public JSON API on Vercel Edge, and IPFS-style content addressing. No contract changes — additive on v0.3.0.
+
+Before: chat plaintext had no privacy-preserving hand-off to a specific reviewer; no third-party read API over studionet other than raw eth_call.
+
+After:
+1. /vault (Loại 3a): WebCrypto envelope — ephemeral ECDH P-256 + HKDF-SHA-256 + AES-256-GCM. Private JWK stays in localStorage only. Generate/rotate/delete, encrypt to reviewer's public JWK, decrypt, download JSON.
+2. envelopeContentHash: canonical SHA-256 — content-addressable for Web3.Storage / Pinata / IPFS.
+3. Public JSON API (Loại 4) via Vercel Edge: /api/stats, /api/cases, /api/case/:id, /api/registry/:hash, /api/trust/:addr. 30s SWR, CORS open, no auth, no server-side deposit.
+4. /api docs page — curl + response shapes. ADR-0006 covers crypto choices.
+5. 5 node --test encryption round-trip tests wired to make test-frontend.
+
+98/98 Python + 5/5 node.

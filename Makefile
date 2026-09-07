@@ -6,7 +6,7 @@
 # Deploy: production build + Vercel prod deploy.
 # ================================
 
-.PHONY: help fast slow test build deploy deliverables-check clean
+.PHONY: help fast slow test test-frontend build deploy deliverables-check clean
 
 help:
 	@echo "make fast                — deterministic regression tests (default CI tier)"
@@ -23,7 +23,10 @@ fast:
 slow:
 	pytest -m slow -q
 
-test: fast slow
+test-frontend:
+	node --test frontend/src/lib/encryption.test.mjs
+
+test: fast test-frontend slow
 
 build:
 	npm run build
