@@ -2,6 +2,100 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.10.0] — 2026-09-05 — Milestone Phase 3: Requester reputation + Analytics + Watcher subscriptions + Refund + Pause (contract redeploy)
+
+### Contracts (redeploy required — new addresses tracked in `scripts/deploy.md`)
+- **`StillHereCore` v0.3.0** — additive schema, no breaking view removals.
+  - **New storage**: `requester_stats: TreeMap[addr_str, RequesterStats]`,
+    `verdict_counts: TreeMap[label, u32]`, `all_case_ids: DynArray[str]`,
+    `paused: bool`.
+  - **New `RequesterStats` dataclass**: `total_cases`, `scam_hits`, `real_hits`,
+    `inconclusive_hits`, `failed_cases`, `disputes_filed`, `last_active`. Populated
+    inside the transaction that resolves the jury so the counters can never drift
+    from the verdict slot. See [ADR 0005](docs/adr/0005-requester-reputation.md).
+  - **New view methods**: `get_requester_stats`, `get_trust_tier` (pure derivation of
+    GUARDIAN / TRUSTED / NEWCOMER / SUSPECT / UNRANKED from stats),
+    `get_verdict_count(label)`, `get_total_cases`, `get_paused`,
+    `list_recent_case_ids(offset, limit)` — cursor pagination over the reverse-chron
+    case index.
+  - **Refund path (Loại 5)**: `refund_failed_case(case_id)` — the original requester
+    can reclaim `fee_paid + bounty_pool` for a case whose state is `FAILED` (jury
+    never converged: canary mismatch, malformed JSON, all fetches failed). Follows
+    the same pull-withdrawal pattern as `claim_contribution_bounty`.
+  - **Emergency pause**: `set_paused(bool)` (admin-only). While paused,
+    `request_verification`, `contribute_evidence`, and `file_dispute` all revert.
+    Withdrawals stay open by design.
+  - **Admin rotation**: `set_admin(new_admin)` — allows rotating the admin key
+    without redeploying.
+  - **Watcher unsubscribe**: `unsubscribe_watcher(profile_hash)` forwards to Registry;
+    dedupe on subscribe so a watcher is never listed twice.
+- **`ScammerRegistry` v0.3.0** — additive schema.
+  - **New storage**: `all_profile_hashes: DynArray[str]`,
+    `profile_seen: TreeMap[str, bool]`, `verdict_histogram: TreeMap[label, u32]`.
+  - **New views**: `get_total_profiles`, `get_verdict_count(label)`,
+    `list_profile_hashes(offset, limit)`, `get_watcher_count(profile_hash)`,
+    `is_watching(profile_hash, watcher)`.
+  - **New writes** (both core-guarded): `bump_histogram(label)` — global verdict
+    tally maintained by the core after each verdict; `unsubscribe_watcher` mirroring
+    the core proxy.
+
+### AI Jury upgrade (Loại 1b — multi-source cross-reference)
+- **`_corroboration_targets(primary_url)`** derives 4 content-aware public read-only
+  endpoints from the primary profile URL: Wayback availability probe, urlscan.io
+  domain search, Google cache probe, and a DuckDuckGo scam-mention search. The
+  leader function fetches each with `gl.nondet.web.get` and stitches the results
+  into a new **CORROBORATION** block in the jury prompt.
+- **Prompt hard rule 3 tightened**: LIKELY_SCAM_RING now requires converging critical
+  evidence from **≥2 independent sources** (primary profile fetch alone is not
+  enough — must be corroborated by reverse-image hit, contributor evidence, or
+  a corroboration source).
+- **Prompt hard rule 6 added**: a profile with zero digital footprint across all
+  four corroboration sources is a `NO_DIGITAL_FOOTPRINT` **WARNING**, not a solo
+  CRITICAL — preventing a single-source zero-footprint from firing LIKELY_SCAM_RING
+  on its own.
+- Backward-compatible signature: legacy call sites that don't pass
+  `corroboration=` keep working (defaults to `[]`).
+
+### Frontend — Analytics + Trust + Watcher UX
+- **`/stats`** — new protocol analytics dashboard. Reads `get_total_cases`,
+  `get_total_profiles`, `get_paused`, `get_verdict_count(label)` for each of the
+  four verdict labels; renders a per-label distribution bar chart + 4 stat tiles
+  (total cases / unique profiles / % flagged / verdicts recorded). Paused-protocol
+  banner appears iff `get_paused == true`.
+- **`/trust/:addr`** — new per-wallet trust profile page. Reads `get_trust_tier`
+  + `get_requester_stats`, renders the tier chip (GUARDIAN / TRUSTED / NEWCOMER /
+  SUSPECT / UNRANKED), 7 metric tiles, and an inline explainer of the tier bands.
+  A shortcut button next to the connected wallet in the header jumps directly to
+  `/trust/<own address>`.
+- **`/registry`** — watcher subscribe/unsubscribe wired for real. Uses
+  `get_watcher_count` + `is_watching` to render the correct button state; signs
+  `subscribe_watcher` / `unsubscribe_watcher` on the core proxy; shows the tx hash
+  + Explorer deep link inline. Sub-count updates after finalization.
+- **`/verdict/:id`** — new `FailedRefundBox` renders when `state == FAILED`. The
+  original requester can claim the base_fee + bounty_pool refund from this page
+  and then pull it via the existing `withdraw()` call. Also adds a "Requester
+  trust" button that deep-links to `/trust/<requester>`.
+
+### Docs
+- **`docs/adr/0005-requester-reputation.md`** — full context + decision + rejected
+  alternatives (reputation NFT, off-chain Dune, cross-wallet delegation, and the
+  explicit refusal to feed requester reputation into the jury verdict itself).
+- **`SECURITY.md`** — v4 addendum on the new admin controls (pause switch,
+  admin rotation), the refund path, and the widened trust surface for GUARDIAN
+  wallets.
+- **`scripts/deploy.md`** — v0.10.0 constructor arguments unchanged; the
+  historical addresses table gets a new row once the studionet redeploy lands.
+
+### Tests
+- **`tests/test_phase3_reputation.py`** — 20 new tests: 6 tier bands + hypothesis
+  property that `_trust_tier` never crashes across the whole stats domain; 4 tests
+  on `_extract_host` (rejects non-http, preserves ports, hypothesis lowercase
+  round-trip); 4 tests on `_corroboration_targets` (empty on empty, 4 labels
+  present, https-only, urlscan uses host); 3 tests on the corroboration prompt
+  wiring (backwards-compat, block embedded, rule 6 present).
+- **Total suite**: **98 tests passing** (63 example + 16 property phase-2 + 20
+  phase-3 + 1 gltest smoke — up from 80).
+
 ## [0.9.0] — 2026-08-30 — Milestone Phase 2: Property-based Hardening + Onboarding Tour + SECURITY v3
 
 ### Added — formal verification (Loại 5d)

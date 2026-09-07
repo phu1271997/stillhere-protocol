@@ -1,11 +1,23 @@
 # Deployment Guide & Contract Addresses (Studionet)
 
-## Current Deployed Contract Addresses (v0.3.0, 2026-08-10)
+## Current Deployed Contract Addresses
 
-| Contract | Deployed Address |
-|---|---|
-| **StillHereCore** | `0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5` |
-| **ScammerRegistry** | `0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df` |
+| Contract | Version | Deployed Address |
+|---|---|---|
+| **StillHereCore** | v0.2.16 (live) | `0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5` |
+| **ScammerRegistry** | v0.2.16 (live) | `0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df` |
+
+> **Redeploy pending for v0.3.0 (Milestone Phase 3).** The v0.3.0 contracts add
+> new storage fields (`requester_stats`, `verdict_counts`, `paused`,
+> `all_case_ids`, `all_profile_hashes`, `verdict_histogram`) and new methods
+> (`refund_failed_case`, `set_paused`, `set_admin`, `unsubscribe_watcher`,
+> `bump_histogram`, `get_trust_tier`, `get_requester_stats`, `get_total_cases`,
+> `get_verdict_count`, `list_recent_case_ids`, `get_total_profiles`,
+> `list_profile_hashes`, `get_watcher_count`, `is_watching`). Studio does not
+> support in-place storage migration, so the redeploy replaces both addresses.
+> After redeploy: update `.env`, `.env.example`, `frontend/src/lib/client.ts`
+> fallback defaults, this file's table, `README.md`, then `git commit`,
+> push to `main`, and `vercel deploy --prod`.
 
 Explorer: [`https://explorer-studio.genlayer.com`](https://explorer-studio.genlayer.com)
 

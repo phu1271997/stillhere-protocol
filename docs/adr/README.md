@@ -18,3 +18,4 @@ should be able to see *why* we did not do the obvious-looking thing.
 | [0002](0002-hash-only-privacy.md) | Hash-only privacy — no plaintext on-chain | Accepted |
 | [0003](0003-e4-verdict-downgrade.md) | E4 auto-downgrade of `LIKELY_SCAM_RING` | Accepted |
 | [0004](0004-max-one-dispute.md) | Cap disputes at Round 2 | Accepted |
+| [0005](0005-requester-reputation.md) | Requester reputation tiers derived on-chain | Accepted |

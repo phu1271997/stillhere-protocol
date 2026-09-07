@@ -1,0 +1,13 @@
+Phase 3 ships requester reputation, protocol analytics, watcher subscriptions, FAILED-case refund, admin pause, and a 4-source AI cross-reference upgrade. Contract redeploy required (v0.3.0 replaces v0.2.16).
+
+Before: no reputation, no aggregate stats, watchers write-only, FAILED trapped fees, no kill-switch, jury read only the primary URL.
+
+After:
+1. RequesterStats + get_trust_tier (GUARDIAN/TRUSTED/NEWCOMER/SUSPECT/UNRANKED — pure derivation, never fed into the verdict, ADR 0005). Bumped inside the verdict tx.
+2. refund_failed_case: pull-payment of fee+bounty for FAILED cases. Zeroed after credit.
+3. set_paused + set_admin. Withdrawals stay open when paused; /stats banner surfaces it.
+4. subscribe_watcher dedupe + unsubscribe + get_watcher_count + is_watching in /registry.
+5. Multi-source AI: Wayback + urlscan + cache + DuckDuckGo. Rule 3: LIKELY_SCAM_RING needs ≥2 independent sources.
+6. /stats + /trust/:addr pages; ADR-0005; SECURITY v4.
+
+98/98 tests pass (+20).

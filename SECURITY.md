@@ -1,9 +1,74 @@
-# StillHere Security Threat Model (v3 — 2026-08-29)
+# StillHere Security Threat Model (v4 — 2026-09-05)
 
-> **v3 addendum** (this section) sits on top of the v2 baseline below.
-> The v2 threat table is intact and still authoritative for T1–T9. v3
-> only introduces new mitigation surfaces and new self-check items —
-> nothing in v2 has been retracted.
+> **v4 addendum** (this section) sits on top of the v3 addendum and
+> v2 baseline below. The v2 threat table is intact and still
+> authoritative for T1–T9. v3 remains authoritative for the
+> property-based coverage and disclosure surface. v4 only introduces
+> the new admin controls, the refund path, and the trust-surface
+> widening — nothing before is retracted.
+
+## v4 additions (Milestone Phase 3)
+
+### Emergency pause switch (closes v3 known-limitation)
+
+- `StillHereCore.paused: bool` — admin-only toggle via `set_paused(on)`.
+- When paused, `request_verification`, `contribute_evidence`, and
+  `file_dispute` revert with `UserError("protocol is paused")`.
+  `withdraw` and `refund_failed_case` stay open by design: pause must
+  never trap user funds.
+- `get_paused` is a public view; the frontend `/stats` page renders a
+  banner while the flag is set, so the state is externally visible
+  before a user attempts a doomed transaction.
+- Admin rotation (`set_admin(new_admin)`) is separate from pause so the
+  operator key can be rotated without cycling the pause flag.
+
+### Refund path for FAILED cases (Loại 5 pattern)
+
+- `refund_failed_case(case_id)` — the original requester can reclaim
+  `fee_paid + bounty_pool` for a case whose state is `FAILED` (jury
+  never converged: canary mismatch, malformed JSON, missing fields,
+  all fetches failed). Follows the same pull-payment pattern as
+  `claim_contribution_bounty`: credits `withdrawable[requester]`, does
+  not transfer native GEN directly. Prevents a stuck-fee grief where
+  a genuinely broken oracle round permanently locks funds in the
+  treasury.
+- Requester-only guard: caller must equal `c.requester`; treasury
+  underflow-guarded (`c.fee_paid > self.treasury` reverts).
+- Once refunded, `c.fee_paid` and `c.bounty_pool` are zeroed so the
+  same FAILED case cannot be refunded twice.
+
+### Trust surface widening — reputation is advisory, never a verdict input
+
+- `RequesterStats` counters are visible to any consumer via
+  `get_requester_stats` / `get_trust_tier`. That widens the on-chain
+  surface: any wallet address that has submitted a case now leaks
+  the count and rough outcome distribution of its submissions.
+- **Explicit non-goal** (see ADR 0005 § Alternatives considered):
+  requester reputation is NOT fed into the AI Jury prompt or into any
+  verdict-weighting function. If it were, a `GUARDIAN`-tier wallet
+  reporting an innocent profile would tilt the jury against the
+  subject — reinforcing false positives. Reputation is advisory to
+  human consumers only.
+- **Sybil-attack mitigation left in place**: earning `GUARDIAN` still
+  requires 10 cases and ≥30% flagged; each of those cases costs
+  `base_fee` on the wallet, so a spam farm cannot cheaply promote
+  itself into the top tier.
+
+### v4 self-check additions
+
+- [x] `set_paused` gated on admin equality; the pause banner is
+  visible from `/stats` before any wallet is asked to sign.
+- [x] `refund_failed_case` reverts if state != FAILED, if caller is
+  not the requester, or if `fee_paid > treasury`.
+- [x] `refund_failed_case` zeroes `c.fee_paid` and `c.bounty_pool`
+  before crediting withdrawable — double-refund impossible.
+- [x] `get_trust_tier` is a pure derivation from stats; test
+  coverage: `tests/test_phase3_reputation.py::test_trust_tier_*`.
+- [x] Multi-source AI corroboration (`_corroboration_targets`) fetches
+  read-only public endpoints only. No target contains `login`,
+  `signin`, `oauth`, or a POST path.
+
+---
 
 ## v3 additions (Milestone Phase 2)
 
