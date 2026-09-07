@@ -14,7 +14,7 @@ import { readView, CORE_ADDRESS, STUDIONET_EXPLORER } from './_studionet';
 
 export const config = { runtime: 'edge' };
 
-const APP_ORIGIN = 'https://stillhere-protocol.vercel.app';
+const APP_ORIGIN = 'https://stillhere-protocol-two.vercel.app';
 const FEED_LIMIT = 50;
 
 function xmlEscape(s: string): string {

@@ -67,7 +67,7 @@ Upload the **1024** version to Portal. Meets spec: PNG · 1024 px · < 2 MB. Mar
 - Any public web page you're willing to have the jury read as evidence (e.g. a Wikipedia article, a news page, a public social profile). No login-walled URL.
 
 ### Step 1 — Connect wallet and switch network
-Open <https://stillhere-protocol.vercel.app>. Click **Connect Wallet** in the header. MetaMask prompts to add / switch to `GenLayer Studio Network` (chain id `0xF1EF` / `61999`). Approve. Your address appears in the header.
+Open <https://stillhere-protocol-two.vercel.app>. Click **Connect Wallet** in the header. MetaMask prompts to add / switch to `GenLayer Studio Network` (chain id `0xF1EF` / `61999`). Approve. Your address appears in the header.
 
 ### Step 2 — Submit a verification request
 Navigate to **Request Verify** in the header. Fill:
@@ -126,7 +126,7 @@ Verified via `curl` on 2026-08-25: `gen_getContractSchema` returns 11 methods fo
 ---
 
 ## Section 03 — Website / GitHub
-- **Website:** https://stillhere-protocol.vercel.app
+- **Website:** https://stillhere-protocol-two.vercel.app
 - **GitHub:** https://github.com/phu1271997/stillhere-protocol
 
 ---

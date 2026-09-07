@@ -82,7 +82,7 @@ Contents of `deliverables/text/description.txt`, paste verbatim:
 - Any public web page you're willing to have the jury read as evidence (e.g. a Wikipedia article). No login-walled URL.
 
 ### Step 1 — Connect wallet and switch network
-Open <https://stillhere-protocol.vercel.app>. Click **Connect Wallet** in the header. MetaMask prompts to add / switch to `GenLayer Studio Network` (chain id `0xF1EF` / `61999`). Approve. Your address appears in the header.
+Open <https://stillhere-protocol-two.vercel.app>. Click **Connect Wallet** in the header. MetaMask prompts to add / switch to `GenLayer Studio Network` (chain id `0xF1EF` / `61999`). Approve. Your address appears in the header.
 
 ### Step 2 — Submit a verification request
 Navigate to **Request Verify** in the header. Fill:
@@ -145,7 +145,7 @@ Verified 2026-08-27 via `curl gen_getContractSchema` — the Core returns 11 met
 
 ## Section 03 — WEBSITE / GITHUB
 
-- **Website:** https://stillhere-protocol.vercel.app
+- **Website:** https://stillhere-protocol-two.vercel.app
 - **GitHub:** https://github.com/phu1271997/stillhere-protocol
 
 ---

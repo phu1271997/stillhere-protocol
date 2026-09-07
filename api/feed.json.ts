@@ -9,7 +9,7 @@ import { readView, CORE_ADDRESS, jsonResponse } from './_studionet';
 
 export const config = { runtime: 'edge' };
 
-const APP_ORIGIN = 'https://stillhere-protocol.vercel.app';
+const APP_ORIGIN = 'https://stillhere-protocol-two.vercel.app';
 const FEED_LIMIT = 50;
 
 interface Summary {

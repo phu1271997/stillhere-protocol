@@ -49,7 +49,7 @@ curl -s -X POST https://studio.genlayer.com/api \
 
 # 2) frontend routes 200
 for p in / /how-it-works /cases /contribute/0 /registry /request; do
-  curl -s -o /dev/null -w "$p: %{http_code}\n" "https://stillhere-protocol.vercel.app$p"
+  curl -s -o /dev/null -w "$p: %{http_code}\n" "https://stillhere-protocol-two.vercel.app$p"
 done
 
 # 3) tests pass

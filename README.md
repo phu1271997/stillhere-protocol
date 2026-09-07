@@ -70,7 +70,7 @@ See [`docs/ETHICS.md`](docs/ETHICS.md) for detailed privacy specifications.
 | **ScammerRegistry** | [`0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df`](https://explorer-studio.genlayer.com/address/0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df) |
 | **CaseAnnotations** | [`0x7461Dd4632caF645fD435670ec5345B86b3cf530`](https://explorer-studio.genlayer.com/address/0x7461Dd4632caF645fD435670ec5345B86b3cf530) |
 
-> **Live app**: <https://stillhere-protocol.vercel.app>
+> **Live app**: <https://stillhere-protocol-two.vercel.app>
 
 For deployment logs and parameters, see [`scripts/deploy.md`](scripts/deploy.md).
 
@@ -107,7 +107,7 @@ Current suite: **63 tests passing** covering deterministic helpers, E4 downgrade
 
 **Prerequisites:** MetaMask installed, GEN balance on studionet (transfer from a pre-funded Studio account via `https://studio.genlayer.com` → **Accounts** panel).
 
-1. Open <https://stillhere-protocol.vercel.app>. Click **Connect Wallet** in header → MetaMask prompts to add / switch to `GenLayer Studio Network` (chain id `61999`).
+1. Open <https://stillhere-protocol-two.vercel.app>. Click **Connect Wallet** in header → MetaMask prompts to add / switch to `GenLayer Studio Network` (chain id `61999`).
 2. Click **Request AI Verification**. Fill:
    - Public Profile URL: any public page (e.g. `https://en.wikipedia.org/wiki/Romance_scam`)
    - Claimed Name: `Test Subject`
@@ -139,7 +139,7 @@ SECURITY.md      # T1–T9 threat model
 ## 9. Submission — GenLayer Builder Program (Track Builders)
 
 - **Repo:** <https://github.com/phu1271997/stillhere-protocol>
-- **Live app:** <https://stillhere-protocol.vercel.app>
+- **Live app:** <https://stillhere-protocol-two.vercel.app>
 - **StillHereCore:** [`0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5`](https://explorer-studio.genlayer.com/address/0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5)
 - **ScammerRegistry:** [`0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df`](https://explorer-studio.genlayer.com/address/0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df)
 - **CaseAnnotations:** [`0x7461Dd4632caF645fD435670ec5345B86b3cf530`](https://explorer-studio.genlayer.com/address/0x7461Dd4632caF645fD435670ec5345B86b3cf530)

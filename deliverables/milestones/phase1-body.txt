@@ -11,4 +11,4 @@ After — 7 concrete changes:
 6. docs/API.md + docs/DIAGRAMS.md (Mermaid) + docs/RUNBOOK.md.
 7. docs/samples/ with 3 case payload fixtures.
 
-Fast tests 63/63 pass. Live: stillhere-protocol.vercel.app.
+Fast tests 63/63 pass. Live: stillhere-protocol-two.vercel.app.

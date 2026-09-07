@@ -16,7 +16,7 @@ const ENDPOINTS: Endpoint[] = [
     method: 'GET',
     path: '/api/stats',
     purpose: 'Aggregate protocol counters — total cases, unique profiles, per-label verdict histogram, pause state.',
-    example: 'curl -sS https://stillhere-protocol.vercel.app/api/stats',
+    example: 'curl -sS https://stillhere-protocol-two.vercel.app/api/stats',
     responseSketch: `{
   "ok": true, "total_cases": 42, "total_profiles": 27, "paused": false,
   "verdicts_recorded": 40, "scam_share_percent": 55,
@@ -33,7 +33,7 @@ const ENDPOINTS: Endpoint[] = [
       { name: 'offset', type: 'int', note: 'Number of newest cases to skip. Default 0.' },
       { name: 'limit', type: 'int', note: '1..100. Default 25.' },
     ],
-    example: 'curl -sS "https://stillhere-protocol.vercel.app/api/cases?limit=5"',
+    example: 'curl -sS "https://stillhere-protocol-two.vercel.app/api/cases?limit=5"',
     responseSketch: `{
   "ok": true, "offset": 0, "limit": 5, "total_cases": 42,
   "case_ids": ["41", "40", "39", "38", "37"]
@@ -45,7 +45,7 @@ const ENDPOINTS: Endpoint[] = [
     path: '/api/case/:id',
     purpose: 'Fetch the full on-chain case + verdict payload for a case id.',
     params: [{ name: ':id', type: 'int', note: 'Path segment. Integer case id.' }],
-    example: 'curl -sS https://stillhere-protocol.vercel.app/api/case/7',
+    example: 'curl -sS https://stillhere-protocol-two.vercel.app/api/case/7',
     responseSketch: `{
   "ok": true, "case_id": "7",
   "case": { "state": "VERDICT", "public_urls": [...], "profile_hash": "0x…" },
@@ -58,7 +58,7 @@ const ENDPOINTS: Endpoint[] = [
     path: '/api/registry/:hash',
     purpose: 'Aggregate profile status + watcher count for a canonical profile hash.',
     params: [{ name: ':hash', type: 'hex', note: '0x-prefixed profile hash.' }],
-    example: 'curl -sS https://stillhere-protocol.vercel.app/api/registry/0xabcd…',
+    example: 'curl -sS https://stillhere-protocol-two.vercel.app/api/registry/0xabcd…',
     responseSketch: `{
   "ok": true, "profile_hash": "0xabcd…",
   "status": { "verdict_label": "SUSPICIOUS", "highest_confidence": 82, "case_count": 3 },
@@ -71,7 +71,7 @@ const ENDPOINTS: Endpoint[] = [
     path: '/api/trust/:addr',
     purpose: 'Trust tier + full RequesterStats for a wallet address.',
     params: [{ name: ':addr', type: 'address', note: '0x-prefixed 40-hex wallet address.' }],
-    example: 'curl -sS https://stillhere-protocol.vercel.app/api/trust/0x1234…',
+    example: 'curl -sS https://stillhere-protocol-two.vercel.app/api/trust/0x1234…',
     responseSketch: `{
   "ok": true, "address": "0x1234…", "tier": "GUARDIAN",
   "stats": { "total_cases": 12, "scam_hits": 5, "real_hits": 3, "failed_cases": 0 }
@@ -82,7 +82,7 @@ const ENDPOINTS: Endpoint[] = [
     method: 'GET',
     path: '/api/feed.xml',
     purpose: 'Atom 1.0 feed of the last 50 case verdicts. Subscribable in Feedly / Inoreader / iOS Reader / NetNewsWire.',
-    example: 'curl -sS https://stillhere-protocol.vercel.app/api/feed.xml',
+    example: 'curl -sS https://stillhere-protocol-two.vercel.app/api/feed.xml',
     responseSketch: `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>StillHere — On-chain Romance Scam Verdicts</title>
@@ -99,7 +99,7 @@ const ENDPOINTS: Endpoint[] = [
     method: 'GET',
     path: '/api/feed.json',
     purpose: 'JSON Feed 1.1 companion to /api/feed.xml — same reads, JSON shape.',
-    example: 'curl -sS https://stillhere-protocol.vercel.app/api/feed.json',
+    example: 'curl -sS https://stillhere-protocol-two.vercel.app/api/feed.json',
     responseSketch: `{
   "version": "https://jsonfeed.org/version/1.1",
   "title": "StillHere — On-chain Romance Scam Verdicts",
@@ -115,7 +115,7 @@ const ENDPOINTS: Endpoint[] = [
     path: '/api/og/case/:id.svg',
     purpose: 'Server-rendered SVG unfurl card for a case verdict. 1200×630, deterministic per case_id. Suitable as the target of <meta property="og:image">.',
     params: [{ name: ':id', type: 'int', note: 'Path segment. Integer case id.' }],
-    example: 'curl -sS https://stillhere-protocol.vercel.app/api/og/case/7.svg',
+    example: 'curl -sS https://stillhere-protocol-two.vercel.app/api/og/case/7.svg',
     responseSketch: '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">…</svg>',
     cache: '300 s edge cache · 1800 s SWR',
   },

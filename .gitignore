@@ -9,3 +9,7 @@ __pycache__/
 .pytest_cache/
 scratch_*.mjs
 artifacts/
+.vercel
+.env
+.env.local
+.env.*.local
