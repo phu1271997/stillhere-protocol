@@ -2,6 +2,71 @@
 
 All notable changes to the StillHere project will be documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.12.0] — 2026-09-07 — Milestone Phase 1 (v2): Community Annotations contract + Case Explorer + Public Atom/JSON feeds + OG cards + Bilingual EN/VI UI
+
+### Added — new contract `CaseAnnotations`
+- **`contracts/case_annotations.py`** — standalone deploy. `Annotation`
+  dataclass with `author / category / body_hash / evidence_url / posted_at`.
+  Per-wallet per-case dedupe map, global per-wallet cooldown (default 60 s,
+  admin-tunable), closed 5-tag category enum (`WITNESS`,
+  `INHERITED_PATTERN`, `COUNTER_CONTEXT`, `CORROBORATE`, `SAFETY_TIP`),
+  hash-only body storage (keccak256 hex on the client), optional canonical
+  URL. Admin controls: `set_paused`, `set_cooldown_secs`, `set_admin`.
+- Views: `get_annotations`, `get_annotation_count`, `has_annotated`,
+  `get_total_annotations`, `get_category_count`, `list_annotated_case_ids`.
+- **Tests**: `tests/test_case_annotations.py` — 11 helper-level tests
+  (category enum stability, bounds sanity, address canonicalization).
+
+### Added — Case Explorer + Annotation UI
+- **`/explorer`** — browsable public case index. Merges local
+  `caseStore` rows with a chain-side read of `list_recent_case_ids` when
+  the v0.3.0 endpoint is available; falls back to local rows only with a
+  labelled hint if the chain read fails (no fake data). Filter by verdict,
+  free-text search over case_id / requester / public URL, copy-share
+  affordance per row.
+- **`AnnotationBox` component** — mounted on `/verdict/:id`. Reads the
+  annotations list for the case, renders category chips, author fingerprint,
+  posted timestamp, body hash + optional evidence URL. Post-annotation form
+  with the 5 category tags, body textarea (hashed before submission), and
+  optional evidence URL. Auto-disables when the wallet has already annotated
+  the case.
+- **`frontend/src/lib/annotations.ts`** — client library:
+  `computeAnnotationBodyHash` (keccak256), `readAnnotations`,
+  `readAnnotationCount`, `hasAnnotated`, `postAnnotation`. Gracefully
+  reports "contract not configured" when `VITE_ANNOTATIONS_ADDRESS`
+  is empty.
+
+### Added — Public verdict feeds
+- **`/api/feed.xml`** — Atom 1.0 feed of the last 50 case verdicts.
+  Subscribable in Feedly / Inoreader / iOS Reader / NetNewsWire. Per-entry
+  `<updated>` reflects verdict finalization, `<published>` reflects
+  submission — matches the request → dispute → re-verdict lifecycle.
+- **`/api/feed.json`** — JSON Feed 1.1 companion for JSON-friendly
+  integrations.
+- **`/api/og/case/:id.svg`** — server-rendered 1200×630 SVG unfurl card
+  per case. Palette driven by verdict label, deterministic per case_id,
+  ready as the target of `<meta property="og:image">`.
+- **`vercel.json` rewrites**: `/feed.xml`, `/feed.json`, and
+  `/api/og/case/:id.svg` → their edge-function targets.
+
+### Added — Bilingual UI (English + Vietnamese)
+- **`frontend/src/lib/i18n.tsx`** — dependency-free i18n context,
+  `useI18n` hook, `t()` function, `LanguageToggle` chip. Persists locale
+  in `localStorage` under `stillhere:locale:v1`; auto-detects
+  `navigator.language.startsWith('vi')` on first visit. Sets
+  `document.documentElement.lang` so screen readers pick up the switch.
+- **Translations**: hero, nav, `/explorer` shell, `AnnotationBox` form and
+  category labels. Non-translated pages fall back to English.
+
+### Docs
+- **`docs/adr/0007-case-annotations-and-public-feed.md`** — full context
+  + decision + rejected alternatives (in-Core annotations, free-text
+  category, on-chain plaintext, RSS-not-Atom, `@vercel/og` PNGs,
+  `react-i18next`) + consequences.
+
+### No changes to Core or Registry contracts.
+### Fast tier: 109/109 Python tests + 5/5 node encryption tests.
+
 ## [0.11.0] — 2026-09-06 — Milestone Phase 4: Client-side envelope encryption + Public JSON API + IPFS-style content addressing
 
 ### Added — Client-side envelope encryption (Loại 3a)

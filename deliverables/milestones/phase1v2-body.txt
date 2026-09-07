@@ -1,0 +1,11 @@
+Phase 1 v2 ships four coordinated additions: standalone CaseAnnotations contract, public Case Explorer with EN/VI toggle, Atom + JSON feeds, per-case SVG unfurl cards.
+
+Before: no third-party context on a case, no public index (users saw only local rows), no subscribable feed, English-only UI.
+
+After:
+1. contracts/case_annotations.py: standalone deploy. 5-tag enum (WITNESS, INHERITED_PATTERN, COUNTER_CONTEXT, CORROBORATE, SAFETY_TIP). One annotation per wallet per case + per-wallet cooldown. Only keccak256(body) + URL on-chain (E1/E2). Admin pause + cooldown-tune + rotate. ADR 0007.
+2. /explorer: merged local + on-chain index, verdict filter, free-text search, copy-share. Graceful fallback when v0.3.0 endpoints not live.
+3. /api/feed.xml Atom 1.0 + /api/feed.json JSON Feed 1.1 + /api/og/case/:id.svg 1200x630 unfurl. Pretty URLs via vercel.json.
+4. i18n EN/VI toggle. Auto-detect vi- browsers. Hero + nav + Explorer + Annotations translated.
+
+109/109 Python + 5/5 node tests.

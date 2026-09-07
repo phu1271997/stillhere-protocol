@@ -6,6 +6,19 @@
 |---|---|---|
 | **StillHereCore** | v0.2.16 (live) | `0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5` |
 | **ScammerRegistry** | v0.2.16 (live) | `0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df` |
+| **CaseAnnotations** | v0.1.0 (pending deploy) | `—` — set `VITE_ANNOTATIONS_ADDRESS` after deploy |
+
+### `CaseAnnotations` constructor
+
+Single argument:
+
+- `cooldown_secs = 60` — global per-wallet cooldown between annotation posts.
+  Admin-tunable via `set_cooldown_secs(secs)`; hard bounds `[1, 86400]`.
+
+Post-deploy: copy the deployed address into `.env` (`VITE_ANNOTATIONS_ADDRESS=…`),
+push, and redeploy the frontend so the `/verdict/:id` annotation panel activates.
+The annotation UI degrades gracefully when the variable is empty — the panel
+renders a "contract not deployed" hint instead of a broken RPC call.
 
 > **Redeploy pending for v0.3.0 (Milestone Phase 3).** The v0.3.0 contracts add
 > new storage fields (`requester_stats`, `verdict_counts`, `paused`,
