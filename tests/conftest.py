@@ -30,6 +30,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 CORE_PATH = ROOT / "contracts" / "stillhere_core.py"
 REGISTRY_PATH = ROOT / "contracts" / "scammer_registry.py"
+ANNOTATIONS_PATH = ROOT / "contracts" / "case_annotations.py"
 
 
 def clear_known_contracts():
@@ -226,3 +227,8 @@ def core():
 @pytest.fixture(scope="session")
 def registry():
     return _import_module(REGISTRY_PATH, "_stillhere_registry_under_test")
+
+
+@pytest.fixture(scope="session")
+def annotations():
+    return _import_module(ANNOTATIONS_PATH, "_stillhere_annotations_under_test")
