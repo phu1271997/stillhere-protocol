@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/((?!assets/|.*\\.[a-zA-Z0-9]+$).*)", "destination": "/index.html" }
+    { "source": "/api/case/:id", "destination": "/api/case?id=:id" },
+    { "source": "/api/registry/:hash", "destination": "/api/registry?hash=:hash" },
+    { "source": "/api/trust/:addr", "destination": "/api/trust?addr=:addr" },
+    { "source": "/((?!api/|assets/|.*\\.[a-zA-Z0-9]+$).*)", "destination": "/index.html" }
   ]
 }

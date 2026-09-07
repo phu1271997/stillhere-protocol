@@ -12,6 +12,8 @@ import {
   FileText,
   Scale as ScaleIcon,
   BarChart3,
+  Lock,
+  Terminal,
 } from 'lucide-react';
 import { ConnectWallet } from './components/ConnectWallet';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
@@ -29,6 +31,8 @@ import { Cases } from './pages/Cases';
 import { Contribute } from './pages/Contribute';
 import { Stats } from './pages/Stats';
 import { Trust } from './pages/Trust';
+import { Vault } from './pages/Vault';
+import { Api } from './pages/Api';
 
 export const App: React.FC = () => {
   return (
@@ -63,6 +67,12 @@ export const App: React.FC = () => {
                 <Link to="/stats" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
                   <BarChart3 className="w-4 h-4" /> Stats
                 </Link>
+                <Link to="/vault" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
+                  <Lock className="w-4 h-4" /> Vault
+                </Link>
+                <Link to="/api" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
+                  <Terminal className="w-4 h-4" /> API
+                </Link>
                 <Link to="/how-it-works" className="hover:text-brand-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:text-brand-300 focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
                   <HelpCircle className="w-4 h-4" /> How It Works
                 </Link>
@@ -85,6 +95,8 @@ export const App: React.FC = () => {
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/stats" element={<Stats />} />
               <Route path="/trust/:addr" element={<Trust />} />
+              <Route path="/vault" element={<Vault />} />
+              <Route path="/api" element={<Api />} />
             </Routes>
           </main>
         </div>
@@ -113,6 +125,8 @@ export const App: React.FC = () => {
                 <FooterLink to="/cases" label="My cases" />
                 <FooterLink to="/registry" label="Profile registry" />
                 <FooterLink to="/stats" label="Protocol stats" />
+                <FooterLink to="/vault" label="Encrypted vault" />
+                <FooterLink to="/api" label="Public JSON API" />
                 <FooterLink to="/how-it-works" label="How it works" />
               </FooterCol>
 
