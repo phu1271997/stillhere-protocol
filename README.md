@@ -68,6 +68,7 @@ See [`docs/ETHICS.md`](docs/ETHICS.md) for detailed privacy specifications.
 |---|---|
 | **StillHereCore** | [`0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5`](https://explorer-studio.genlayer.com/address/0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5) |
 | **ScammerRegistry** | [`0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df`](https://explorer-studio.genlayer.com/address/0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df) |
+| **CaseAnnotations** | [`0x7461Dd4632caF645fD435670ec5345B86b3cf530`](https://explorer-studio.genlayer.com/address/0x7461Dd4632caF645fD435670ec5345B86b3cf530) |
 
 > **Live app**: <https://stillhere-protocol.vercel.app>
 
@@ -141,6 +142,7 @@ SECURITY.md      # T1–T9 threat model
 - **Live app:** <https://stillhere-protocol.vercel.app>
 - **StillHereCore:** [`0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5`](https://explorer-studio.genlayer.com/address/0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5)
 - **ScammerRegistry:** [`0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df`](https://explorer-studio.genlayer.com/address/0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df)
+- **CaseAnnotations:** [`0x7461Dd4632caF645fD435670ec5345B86b3cf530`](https://explorer-studio.genlayer.com/address/0x7461Dd4632caF645fD435670ec5345B86b3cf530)
 - **Network:** GenLayer Studionet (chain id `61999` / `0xF1EF`, RPC `https://studio.genlayer.com/api`)
 
 **Why this project dies without GenLayer:** a single centralized AI cannot legally issue "SUSPICIOUS" or "LIKELY_SCAM_RING" verdicts on real individuals — single-entity defamation liability kills it. GenLayer's decentralized AI Jury converges on the same subjective verdict from independent validator LLMs, distributes the judgment across the consensus set, and reads live public profile pages directly on-chain without an oracle — none of which is possible on Solidity or on any centralized AI API.

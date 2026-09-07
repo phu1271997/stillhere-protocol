@@ -6,7 +6,7 @@
 |---|---|---|
 | **StillHereCore** | v0.2.16 (live) | `0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5` |
 | **ScammerRegistry** | v0.2.16 (live) | `0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df` |
-| **CaseAnnotations** | v0.1.0 (pending deploy) | `—` — set `VITE_ANNOTATIONS_ADDRESS` after deploy |
+| **CaseAnnotations** | v0.1.0 (live 2026-09-07) | `0x7461Dd4632caF645fD435670ec5345B86b3cf530` |
 
 ### `CaseAnnotations` constructor
 
@@ -68,8 +68,9 @@ Explorer: [`https://explorer-studio.genlayer.com`](https://explorer-studio.genla
 
 ## Historical Addresses
 
-| Version | Date | Core | Registry |
-|---|---|---|---|
-| 0.3.0 | 2026-08-10 | `0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5` | `0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df` |
-| 0.2.0 | 2026-08-06 | `0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805` | `0xACacF85af7532092d6D9c55E7b5EFD4B43069347` |
-| 0.1.0 | 2026-08-05 | `0x2b96674AD3480e198B5704e6535bcC72Ab535A5e` | `0xd4826725f78449CD61D33A43dBb167ABE353Cbdc` |
+| Version | Date | Core | Registry | Annotations |
+|---|---|---|---|---|
+| 0.12.0 | 2026-09-07 | `0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5` | `0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df` | `0x7461Dd4632caF645fD435670ec5345B86b3cf530` |
+| 0.3.0 | 2026-08-10 | `0x687446742DB54f8FEbCF6BBEEB2c47dA81CD97B5` | `0xC87Eb03bE134175E0F3C5AAA0253DC83c23Ed3df` | — |
+| 0.2.0 | 2026-08-06 | `0x7335Ffe64BE8fD82db1f2b2793583055EB8Bc805` | `0xACacF85af7532092d6D9c55E7b5EFD4B43069347` | — |
+| 0.1.0 | 2026-08-05 | `0x2b96674AD3480e198B5704e6535bcC72Ab535A5e` | `0xd4826725f78449CD61D33A43dBb167ABE353Cbdc` | — |
