@@ -1,13 +1,11 @@
-Phase 3 ships requester reputation, protocol analytics, watcher subscriptions, FAILED-case refund, admin pause, and a 4-source AI cross-reference upgrade. Contract redeploy required (v0.3.0 replaces v0.2.16).
+Phase 3 upgrades the smart contracts and adds analytics so families and moderators can see how the protocol is used, and so wallets that surface real scams build a public reputation. Fresh deploy of the two main contracts.
 
-Before: no reputation, no aggregate stats, watchers write-only, FAILED trapped fees, no kill-switch, jury read only the primary URL.
+Before: nobody knew if a wallet had a track record. No dashboard for cases or verdicts. If the Jury could not decide, the fee was stuck. Nobody could follow a profile. Jury read only the profile page.
 
 After:
-1. RequesterStats + get_trust_tier (GUARDIAN/TRUSTED/NEWCOMER/SUSPECT/UNRANKED — pure derivation, never fed into the verdict, ADR 0005). Bumped inside the verdict tx.
-2. refund_failed_case: pull-payment of fee+bounty for FAILED cases. Zeroed after credit.
-3. set_paused + set_admin. Withdrawals stay open when paused; /stats banner surfaces it.
-4. subscribe_watcher dedupe + unsubscribe + get_watcher_count + is_watching in /registry.
-5. Multi-source AI: Wayback + urlscan + cache + DuckDuckGo. Rule 3: LIKELY_SCAM_RING needs ≥2 independent sources.
-6. /stats + /trust/:addr pages; ADR-0005; SECURITY v4.
-
-98/98 tests pass (+20).
+1. Reputation tiers — each wallet earns Guardian / Trusted / Newcomer / Suspect / Unranked from history. Advisory, never fed into a verdict.
+2. Analytics dashboard — a Stats page shows total cases, verdicts by category, and pause state.
+3. Failed-case refund — if the Jury cannot decide, the payer gets money back.
+4. Emergency pause — admin can freeze new cases while withdrawals stay open.
+5. Watch a profile — subscribe or unsubscribe from a profile hash.
+6. Smarter AI — Jury cross-references four public sources before calling a profile a scammer.
