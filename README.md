@@ -90,6 +90,11 @@ For deployment logs and parameters, see [`scripts/deploy.md`](scripts/deploy.md)
 > This release = range `21feccec..e6f105f4`, disjoint from the `0.11.0` milestone
 > (`c6bbac84..21feccec`). Full comparison + no-double-count rule:
 > [`docs/MILESTONE_BOUNDARY_annotations_feed.md`](docs/MILESTONE_BOUNDARY_annotations_feed.md).
+> Immutable diff from the final reviewed version (tag `v0.11.0-reviewed-baseline`,
+> commit `21feccec`) to this Milestone's submitted commit (tag
+> `v0.12.0-annotations-feed`, commit `e6f105f4`), with the not-already-covered
+> proof: [`docs/MILESTONE_COMPARISON_annotations_feed.md`](docs/MILESTONE_COMPARISON_annotations_feed.md)
+> (`git diff v0.11.0-reviewed-baseline..v0.12.0-annotations-feed --stat`).
 
 ---
 
