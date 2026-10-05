@@ -82,6 +82,15 @@ For deployment logs and parameters, see [`scripts/deploy.md`](scripts/deploy.md)
 > separately over `c6bbac84..HEAD`. Full isolation + comparison:
 > [`docs/MILESTONE_BOUNDARY_v3.md`](docs/MILESTONE_BOUNDARY_v3.md).
 
+> **Milestone boundary (annotations + feed, v0.12.0):** the Community
+> Annotations + Public Feed release (new `CaseAnnotations` contract + Atom/JSON
+> feeds + Explorer) is frozen at the immutable snapshot tag
+> `v0.12.0-annotations-feed` (commit `e6f105f4`, tree `14903fc8`). Final reviewed
+> baseline: `21feccec` (end of the `0.11.0` encryption + public-API milestone).
+> This release = range `21feccec..e6f105f4`, disjoint from the `0.11.0` milestone
+> (`c6bbac84..21feccec`). Full comparison + no-double-count rule:
+> [`docs/MILESTONE_BOUNDARY_annotations_feed.md`](docs/MILESTONE_BOUNDARY_annotations_feed.md).
+
 ---
 
 ## 5. Running the Frontend Local Dev Server
